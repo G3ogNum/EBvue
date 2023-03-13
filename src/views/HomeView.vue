@@ -1,18 +1,44 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <el-container>
+      <el-aside>
+        <left_menu></left_menu>
+      </el-aside>
+      <el-container>
+        <el-header>
+          <top_header></top_header>
+        </el-header>
+        <el-main>
+
+
+          <!--路由出口-->
+          <!--路由匹配到的组件将渲染在这里-->
+          <router-view></router-view>
+        </el-main>
+      </el-container>
+    </el-container>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+import left_menu from '../components/left_menu.vue'
+import top_header from "@/components/header.vue"
+
 
 export default {
-  name: 'HomeView',
-  components: {
-    HelloWorld
-  }
+  data(){
+    return{}
+  },
+  components:{
+    left_menu,
+    top_header
+  },
+
 }
 </script>
+
+<style scoped>
+.el-header{
+  padding: 0;
+}
+</style>

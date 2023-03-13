@@ -1,0 +1,225 @@
+<template>
+
+  <div class="SCE">
+    <el-row>
+      <el-col :span="24">
+        <div class="grid-content bg-purple-dark">
+          <el-card class="box-card" style="margin-bottom: 20px">
+            <el-form ref="form" :model="form" label-width="80px">
+              <el-form-item label="选择文件">
+                <el-upload
+                    class="upload-demo"
+                    :headers="headers"
+                    ref="upload"
+                    :action="url"
+                    :on-preview="handlePreview"
+                    :on-remove="handleRemove"
+                    :on-change="handleChange"
+                    accept=".DOC,.DOCX"
+                    multiple:false
+                    :with-credentials="true"
+                    :auto-upload="false"
+                    :limit="1"
+                    :on-exceed="handleExceed"
+                    :data="upData"
+                    :disabled="true"
+                    :file-list="form.fileList">
+                  <el-button size="small" type="primary" :disabled="true">点击上传</el-button>
+                  <div slot="tip" class="el-upload__tip">只能上传docx/doc文件</div>
+                </el-upload>
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click="onSubmit">提交</el-button>
+              </el-form-item>
+            </el-form>
+          </el-card>
+          <el-card class="box-card">
+            <div class="xq_border">
+              <div style="margin-top: 20px;margin-left: 20px">
+                <h2>需求规范</h2>
+              </div>
+              <div class="rf_table">
+                <table>
+                  <thead>
+                  <tr>
+                    <th>文档名称</th>
+                    <th>内容说明</th>
+                    <th>下载</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr>
+                    <td>CSBMK-2022</td>
+                    <td>2022年中国软件行业基数标准</td>
+                    <td><a href="./files/CSBMK-2022年中国软件行业基准数据.pdf"
+                           download="2022年中国软件行业基准数据">下载</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>GBT36964-2018</td>
+                    <td>中华人民共和国国家标准软件开发成本度量规范</td>
+                    <td><a href="./files/国家标准《软件工程软件开发成本度量规范》GBT36964-2018.pdf"
+                           download="中华人民共和国国家标准软件开发成本度量规范">下载</a></td>
+                  </tr>
+                  <!--              <tr>
+                                  <td>CSBMK-2022</td>
+                                  <td>2022年中国软件行业基数标准</td>
+                                  <td><el-link type="primary" style="margin-left: 80%" @click="downloadDoc">下载完整的排版实例</el-link>
+
+                                  </td>
+                                </tr>-->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </el-card>
+        </div>
+      </el-col>
+    </el-row>
+  </div>
+
+
+</template>
+
+<script>
+import {getData, getProjectStatus} from "@/api";
+import request from "@/utils/request";
+
+
+export default {
+  data: function () {
+    return {
+      status: {},
+
+      dataForm: {
+        name: '',
+        file: null
+      },
+      headers: {
+        token: 'eyJraWQiOiIzIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJyb2xlIjoiUk9MRV9lblVzZXIifQ.7F40UMvbJRMUPlpqduVvZmB9aNFyVx2hPNgi_YTKYUs',
+        Authorization: 'eyJraWQiOiIzIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJyb2xlIjoiUk9MRV9lblVzZXIifQ.7F40UMvbJRMUPlpqduVvZmB9aNFyVx2hPNgi_YTKYUs'
+      },
+      url: "http://192.168.159.240:25005/pluto/docx/uploadDocx",
+      form: {
+        projectId: '',
+
+      },
+      fileList: [],
+
+    };
+  },
+  methods: {
+    isDisable() {
+      if (this.status.isUploaded === 1) return true
+
+      return false
+    },
+    submitUpload() {
+      this.$refs.upload.submit();
+    },
+
+    handleChange(file, fileList) {
+
+      console.log(fileList)
+      this.form.projectId = 6
+      /* fileList[0].name*/
+    },
+    onSubmit: function () {
+      localStorage.setItem('token', this.token)
+      this.$refs.upload.submit();
+
+      /* console.log('submit!');
+       request({
+         method:"POST",
+         url:'',
+         params: this.form,
+       })*/
+    },
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
+    },
+    handlePreview(file) {
+      console.log(file);
+    },
+    handleExceed(files, fileList) {
+
+      this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+    },
+    beforeRemove(file, fileList) {
+      return this.$confirm(`确定移除 ${file.name}？`);
+    },
+    beforeAvatarUpload(file) {
+      const isDoc = file.type === '.DOC,.DOCX';
+      /* const isLt2M = file.size / 1024 / 1024 < 2;*/
+
+      if (!isDoc) {
+        this.$message.error('上传头像图片只能是 docx或doc 格式!');
+      }
+      /*if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!');
+      }*/
+      return isDoc /*&& isLt2M*/;
+    },
+  },
+  mounted() {
+    getProjectStatus().then(({data}) => {
+      const status = data.data
+      this.status = status
+      console.log(this.status)
+    })
+  },
+  computed: {
+    // 这里定义上传文件时携带的参数，即表单数据
+    upData: function () {
+      return {
+        projectId: 6,
+        /*body: JSON.stringify(this.form)*/
+      }
+    }
+  },
+
+}
+</script>
+
+<style scoped lang="less">
+.xq_border {
+  width: 99%;
+  height: 99%;
+  border: 2px solid #cccccc;
+  border-radius: 5px;
+  padding: 0px 0px 20px 0px;
+}
+
+.rf_table {
+  padding: 0;
+  overflow: hidden;
+  margin: 0;
+  background-color: #fff;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    thead tr th {
+      background-color: rgba(245, 245, 250, 1);
+    }
+
+    thead tr th,
+    tbody tr td {
+      text-align: center;
+      padding: 20px;
+    }
+
+    tbody tr td {
+      border-top: 1px solid rgb(200, 200, 200);
+      border-bottom: 1px solid rgb(200, 200, 200);
+    }
+  }
+}
+
+@media (max-width: 1800px) {
+  .rf_table table {
+
+  }
+}
+</style>
