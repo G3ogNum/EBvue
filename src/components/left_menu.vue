@@ -16,6 +16,10 @@
           text-color="#fff"
           :unique-opened="isUO"
           active-text-color="#ffd04b">
+        <el-menu-item @click="clickMenu(item)" :index="item.name" v-for="item in this.pjt" :key="item.name">
+          <i :class="`el-icon-${item.icon}`"></i>
+          <span slot="title">{{ item.label }}</span>
+        </el-menu-item>
         <el-submenu  :index="item.label" v-for="item in hasChildren" :key="item.label" >
           <template slot="title">
             <i :class="`el-icon-${item.icon}`"></i>
@@ -36,7 +40,7 @@
 
 <style lang="less" scoped>
 .el-menu{
-  height: 100vh;
+  height: 85vh;
   width: 300px;
 }
 .el-col{
@@ -76,6 +80,15 @@ export default {
   data: function () {
     return {
       isUO:true,
+      pjt:[
+        {
+          path: 'project_manager',
+          name: '项目管理',
+          label:'项目管理',
+          icon: "folder",
+          component: project_manager
+        },
+      ],
       menuData: [
         {
           label: '软件功能点分析',
@@ -123,13 +136,6 @@ export default {
           label: '代码溯源',
           icon: "search",
           url: "Home/home"
-        },
-        {
-          path: 'project_manager',
-          name: '项目管理',
-          label:'项目管理',
-          icon: "folder",
-          component: project_manager
         },
         {
           path: '/Code_Repository',

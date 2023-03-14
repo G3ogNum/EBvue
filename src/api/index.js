@@ -14,3 +14,8 @@ export const getNepInfo=()=>{
 export const getProjectStatus=()=>{
     return http.post('http://192.168.159.240:25005/pluto/docx/queryDocx',{projectId:6})
 }
+
+
+export const getProjects=()=>{
+    return http.post('http://192.168.159.240:25005/pluto/project/queryPlutoProjectList')
+}

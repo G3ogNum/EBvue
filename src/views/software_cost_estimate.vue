@@ -6,11 +6,12 @@
         <div class="grid-content bg-purple-dark">
           <el-card class="box-card" style="margin-bottom: 20px">
             <el-form ref="form" :model="form" label-width="80px">
-              <el-form-item label="选择文件">
+              <el-form-item label="选择文件" prop="isUploaded">
                 <el-upload
                     class="upload-demo"
                     :headers="headers"
                     ref="upload"
+                    :rules="rules"
                     :action="url"
                     :on-preview="handlePreview"
                     :on-remove="handleRemove"
@@ -22,10 +23,13 @@
                     :limit="1"
                     :on-exceed="handleExceed"
                     :data="upData"
-                    :disabled="true"
+                    :disabled="(this.status.isUploaded === 1)"
                     :file-list="form.fileList">
-                  <el-button size="small" type="primary" :disabled="true">点击上传</el-button>
+                  <el-button ref="btn" size="small" type="primary"
+
+                             :disabled="(this.status.isUploaded === 1)">点击上传</el-button>
                   <div slot="tip" class="el-upload__tip">只能上传docx/doc文件</div>
+                  <div slot="tip" class="el-upload__tip" style="color: red" v-show="(this.status.isUploaded === 1)">*已上传文件请勿重复上传</div>
                 </el-upload>
               </el-form-item>
               <el-form-item>
@@ -85,10 +89,18 @@
 import {getData, getProjectStatus} from "@/api";
 import request from "@/utils/request";
 
-
 export default {
+  beforeCreate:function(){
+    console.log('该函数：尚未进行数据监测、数据代理')
+  },
   data: function () {
     return {
+      rules:{
+        isUploaded: [
+          {  message: '已上传过文件请勿重复上传', trigger: 'blur' },
+
+        ],
+      },
       status: {},
 
       dataForm: {
@@ -104,19 +116,15 @@ export default {
         projectId: '',
 
       },
-      fileList: [],
+      fileList: [
+      ],
 
     };
   },
   methods: {
-    isDisable() {
-      if (this.status.isUploaded === 1) return true
 
-      return false
-    },
-    submitUpload() {
-      this.$refs.upload.submit();
-    },
+
+
 
     handleChange(file, fileList) {
 
@@ -126,6 +134,7 @@ export default {
     },
     onSubmit: function () {
       localStorage.setItem('token', this.token)
+      this.status.isUploaded=1
       this.$refs.upload.submit();
 
       /* console.log('submit!');
@@ -165,7 +174,14 @@ export default {
     getProjectStatus().then(({data}) => {
       const status = data.data
       this.status = status
-      console.log(this.status)
+      const file={
+        name:this.status.docxFileName,
+        url:'',
+      }
+      this.fileList[0]=file
+      this.handleChange(file,this.fileList)
+      console.log(this.fileList[0])
+
     })
   },
   computed: {
