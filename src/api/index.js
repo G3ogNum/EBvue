@@ -8,14 +8,17 @@ export const getData=()=>{
 }
 
 export const getNepInfo=()=>{
-    return http.post('http://192.168.159.240:25005/pluto/nep/queryPlutoNEP',{projectId:6})
+    return http.post('http://192.168.159.240:25005/pluto/nep/queryPlutoNEP',{projectId:20})
 }
 
 export const getProjectStatus=()=>{
-    return http.post('http://192.168.159.240:25005/pluto/docx/queryDocx',{projectId:6})
+    return http.post('http://192.168.159.240:25005/pluto/docx/queryDocx',{projectId:20})
 }
 
 
 export const getProjects=()=>{
     return http.post('http://192.168.159.240:25005/pluto/project/queryPlutoProjectList')
 }
+
+
+
