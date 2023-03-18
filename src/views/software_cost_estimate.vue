@@ -24,11 +24,11 @@
                     :limit="1"
                     :on-exceed="handleExceed"
                     :data="upData"
-                    :disabled="(this.status.isUploaded === 1)"
+                    :disabled="isDisabled"
                     :file-list="form.fileList">
                   <el-button ref="btn" size="small" type="primary"
 
-                             :disabled="(this.status.isUploaded === 1)">点击上传</el-button>
+                             :disabled="isDisabled">点击上传</el-button>
                   <div slot="tip" class="el-upload__tip">只能上传docx/doc文件</div>
                   <div slot="tip" class="el-upload__tip" style="color: red" v-show="(this.status.isUploaded === 1)">*已上传文件请勿重复上传</div>
                 </el-upload>
@@ -89,17 +89,16 @@
 <script>
 import {getData, getProjectStatus} from "@/api";
 import request from "@/utils/request";
+import Cookie from "js-cookie";
 
 export default {
-  beforeCreate:function(){
-    console.log('该函数：尚未进行数据监测、数据代理')
-  },
+
   data: function () {
     return {
       rules:{
         isUploaded: [
           {  message: '已上传过文件请勿重复上传', trigger: 'blur' },
-
+          { required: true, message: '请选择项目', trigger: 'blur' },
         ],
       },
       status: {},
@@ -109,7 +108,7 @@ export default {
         file: null
       },
       headers: {
-        token: 'eyJraWQiOiIzIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJyb2xlIjoiUk9MRV9lblVzZXIifQ.7F40UMvbJRMUPlpqduVvZmB9aNFyVx2hPNgi_YTKYUs',
+        token: this.$store.state.token,
         Authorization: 'eyJraWQiOiIzIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJyb2xlIjoiUk9MRV9lblVzZXIifQ.7F40UMvbJRMUPlpqduVvZmB9aNFyVx2hPNgi_YTKYUs'
       },
       url: "http://192.168.159.240:25005/pluto/docx/uploadDocx",
@@ -123,7 +122,14 @@ export default {
     };
   },
   methods: {
-
+    isDisabled(){
+      if(!Cookie.get('projectId')){
+        this.$message.warning('请选择项目')
+        return true
+      }
+      else if(this.status.isUploaded === 1)return true
+      return false
+    },
 
 
 

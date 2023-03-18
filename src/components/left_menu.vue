@@ -15,6 +15,7 @@
           background-color="rgba(0, 17, 42, 1)"
           text-color="#fff"
           :unique-opened="isUO"
+
           active-text-color="#ffd04b">
         <el-menu-item @click="clickMenu(item)" :index="item.name" v-for="item in this.pjt" :key="item.name">
           <i :class="`el-icon-${item.icon}`"></i>
@@ -98,6 +99,13 @@ export default {
               path: '/software_cost_estimate',
               name: 'software_cost_estimate',
               label: '成本估算',
+              icon: "s-home",
+              url: "Home/home"
+            },
+            {
+              path: '/ResultSCEFile',
+              name: 'ResultSCEFile',
+              label: '成本估算详情',
               icon: "s-home",
               url: "Home/home"
             },

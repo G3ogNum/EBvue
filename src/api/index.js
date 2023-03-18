@@ -1,5 +1,6 @@
 import http from "@/utils/request";
-
+import store from "@/store";
+import Cookie from "js-cookie";
 //请求首页数据
 export const getData=()=>{
     //返回一个promise对象
@@ -8,11 +9,11 @@ export const getData=()=>{
 }
 
 export const getNepInfo=()=>{
-    return http.post('http://192.168.159.240:25005/pluto/nep/queryPlutoNEP',{projectId:20})
+    return http.post('http://192.168.159.240:25005/pluto/nep/queryPlutoNEP',{projectId:Cookie.get('projectId')})
 }
 
 export const getProjectStatus=()=>{
-    return http.post('http://192.168.159.240:25005/pluto/docx/queryDocx',{projectId:20})
+    return http.post('http://192.168.159.240:25005/pluto/docx/queryDocx',{projectId:Cookie.get('projectId')})
 }
 
 

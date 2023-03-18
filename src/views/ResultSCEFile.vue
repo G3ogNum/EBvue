@@ -1,0 +1,194 @@
+<template>
+  <div class="ResultSCEFile">
+
+    <el-row>
+      <el-col :span="6" style="margin-left: 20px;margin-right: 20px; ">
+          <el-card class="box-card" style="height: 85vh">
+            <div class="custom-tree-container">
+              <div class="video-tree">
+                <el-tree
+                    :data="showData"
+                    show-checkbox
+                    node-key="id"
+                    default-expand-all
+                    :props="proProps"
+                    @node-click="treeClick"
+                    :expand-on-click-node="true">
+
+                  <span class="custom-tree-node" slot-scope="{ node, data  }">
+                  <span>{{ node.label }}</span>
+                  <span>
+                    <el-button
+                        type="text"
+                        size="mini"
+                        @click="() => upadte(data)">
+                      修改
+                    </el-button>
+
+                  </span>
+                </span>
+
+                </el-tree>
+              </div>
+            </div>
+          </el-card>
+        </el-col>
+      <el-col :span="13"style="margin-right: 20px">
+        <el-card class="box-card" style="height: 85vh" :data="fileData">
+          <div class="video-tree" id="ctt">
+            <h5 v-for="item in this.fileData" :id="item.metaId">
+              {{item.metaId+item.metaTitle}}
+              <p>{{item.metaContent}}</p>
+            </h5>
+          </div>
+        </el-card>
+      </el-col>
+      <el-col :span="4" >
+        <el-card class="box-card" style="height: 85vh">
+
+        </el-card>
+      </el-col>
+
+    </el-row>
+  </div>
+</template>
+
+<script>
+import http from "@/utils/request";
+
+let id = 1000;
+
+export default {
+  data() {
+    const generateData = _ => {
+      const data = [];
+      for (let i = 1; i <= 15; i++) {
+        data.push({
+          key: i,
+          label: `备选项 ${ i }`,
+          disabled: i % 4 === 0
+        });
+      }
+      return data;
+    };
+    return {
+      data: generateData(),
+      value: [1, 4],
+      showData:[],
+      fileData:[],
+      metaTitle:'',
+      proProps:{
+        label:'nepDescription',
+      },
+    };
+  },
+
+  methods: {
+    treeClick(node){
+      let target=document.getElementById(node.metaId)
+      let high=target.offsetTop
+      document.getElementById('ctt').scrollTop=high-20
+      console.log(node.metaId)
+    },
+    upadte(data) {
+      const newChild = {id: id++, label: 'testtest', children: []};
+      if (!data.children) {
+        this.$set(data, 'children', []);
+      }
+      data.children.push(newChild);
+    },
+    getList() {
+      http.post('http://192.168.159.240:25005/pluto/nep/queryPlutoNEPList', {projectId: 1/*Cookie.get('projectId')*/}).then(({data}) => {
+        this.showData = data.data
+        this.showData.forEach(function (item){
+          item.nepDescription=item.metaId+item.nepDescription
+        })
+      })
+      http.post('http://192.168.159.240:25005/pluto/docx/queryMetaList', {projectId: 1/*Cookie.get('projectId')*/}).then(({data}) => {
+        this.fileData = data.data
+        /*console.log(this.fileData)*/
+        this.fileData.forEach(function (item){
+          /*item.metaId+=item.metaTitle*/
+        })
+      })
+    },
+
+    /*remove(node, data) {
+      const parent = node.parent;
+      const children = parent.data.children || parent.data;
+      const index = children.findIndex(d => d.id === data.id);
+      children.splice(index, 1);
+    },*/
+
+    renderContent(h, {node, data, store}) {
+      return (
+          <span class="custom-tree-node">
+            <span>{node.label}</span>
+            <span>
+              <el-button size="mini" type="text" on-click={() => this.append(data)}>Append</el-button>
+              <el-button size="mini" type="text" on-click={() => this.remove(node, data)}>Delete</el-button>
+            </span>
+          </span>);
+    }
+  },
+  mounted() {
+    this.getList()
+  }
+};
+</script>
+
+<style scoped lang="less">
+
+
+.custom-tree-node {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  padding-right: 8px;
+}
+::-webkit-scrollbar {
+  width: 0 !important;
+}
+::-webkit-scrollbar {
+  width: 0 !important;height: 0;
+}
+
+.video-tree{
+
+ height: 700px;
+ padding:10px 0;
+ box-sizing: border-box;
+
+ /*设置纵向滚动条、横向滚动条要配合下面的.el-tree-node的样式才能实现*/
+ overflow-y: scroll;
+  overflow-x: scroll;
+  white-space: nowrap;
+
+  ::-webkit-scrollbar{ display: none; }
+    h5{
+      font-size:18px ;
+      font-weight: 400;
+      p{
+        font-size:14px ;
+        font-weight: 400;
+      }
+    }
+
+    >.el-tree{
+      >.el-tree-node{
+      /*设置横向滚动条*/
+      min-width: 100%;
+      display: inline-block;
+
+
+    /*设置根节点隐藏*/
+        >.el-tree-node__content{
+          display: none;
+        }
+      }
+    }
+}
+
+</style>

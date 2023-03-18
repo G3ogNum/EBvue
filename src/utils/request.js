@@ -1,6 +1,6 @@
 import axios from "axios";
-
-
+import store from "@/store";
+import Cookie from "js-cookie";
 
 
 const http=axios.create({
@@ -14,7 +14,7 @@ const http=axios.create({
 // 添加请求拦截器
 http.interceptors.request.use(function (config) {
     // 在发送请求之前做些什么
-    config.headers.token="eyJraWQiOiIzIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJyb2xlIjoiUk9MRV9lblVzZXIifQ.7F40UMvbJRMUPlpqduVvZmB9aNFyVx2hPNgi_YTKYUs"
+    config.headers.token=Cookie.get('token')
     return config;
 }, function (error) {
     // 对请求错误做些什么

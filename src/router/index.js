@@ -12,29 +12,25 @@ import software_cost_estimate from "@/views/software_cost_estimate.vue"
  import user_center from "@/views/user_center.vue";
 import home from "@/views/home.vue";
 import project_manager from "@/views/project_manager.vue";
+import ResultSCEFile from "@/views/ResultSCEFile.vue"
 
 Vue.use(VueRouter)
 
 const routes = [
   {
-    path: 'home',
-    name: '首页',
-    label:'首页',
-    component: home
+    path: '/login',
+    name: '登录',
+    label:'登录',
+    component: login
   },
+
   {
     path: '/',
     name: '首页',
     label:'首页',
-    redirect: '/software_cost_estimate',
+    redirect: '/login',
     component: HomeView,
     children:[
-      {
-        path: 'login',
-        name: '登录',
-        label:'登录',
-        component: login
-      },
       {
         path: 'software_cost_estimate',
         name: '成本评估',
@@ -46,6 +42,12 @@ const routes = [
         name: '成本评估结果',
         label:'成本评估结果',
         component: ResultSCE
+      },
+      {
+        path: '/ResultSCEFile',
+        name: '成本评估文档',
+        label:'成本评估文档',
+        component: ResultSCEFile
       },
       {
         path: 'ResultCCA',

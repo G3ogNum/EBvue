@@ -6,11 +6,22 @@
         width="30%"
         :before-close="handleClose">
       <el-form  :model="changeForm" :rules="rules" ref="changeForm" label-width="150px" class="demo-ruleForm">
-        <el-form-item label="id" prop="id">
-          <el-input v-model="changeForm.id"></el-input>
+        <el-form-item label="nepId" prop="nepId">
+          <el-input :disabled="true" v-model="changeForm.nepId"></el-input>
         </el-form-item>
-        <el-form-item label="nepType" prop="nepType">
+<!--        <el-form-item label="nepType" prop="nepType">
           <el-input v-model="changeForm.nepType"></el-input>
+        </el-form-item>-->
+        <el-form-item label="nepType" prop="nepType">
+          <el-select v-model="changeForm.nepType" placeholder="请选择功能点类型">
+            <el-option label="0" value="0"></el-option>
+            <el-option label="1" value="1"></el-option>
+            <el-option label="2" value="2"></el-option>
+            <el-option label="3" value="3"></el-option>
+            <el-option label="4" value="4"></el-option>
+            <el-option label="5" value="5"></el-option>
+            <el-option label="6" value="6"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="nepDescription" prop="nepDescription">
           <el-input v-model="changeForm.nepDescription"></el-input>
@@ -24,17 +35,18 @@
     <el-row>
       <el-col :span="24">
         <el-card class="box-card" style="height: 800px">
+          <div class="ResultSCE_header">
+            <el-button type="primary" @click="onClick">查看详情</el-button>
+          </div>
           <div class="common-table">
             <el-table
                 :data="showTableData"
-                style="width: 100%"
 
                 height="700px"
                 :row-class-name="tableRowClassName">
               <el-table-column
                   label="id"
-                  prop="id"
-                  width="180">
+                  prop="id">
                 <template slot-scope="scope">
 
                   <span style="margin-left: 10px">{{ scope.row.id }}</span>
@@ -42,8 +54,7 @@
               </el-table-column>
               <el-table-column
                   label="metaId"
-                  prop="metaId"
-                  width="180">
+                  prop="metaId">
                 <template slot-scope="scope">
                   <el-popover trigger="hover" placement="top">
                     <p>姓名: {{ scope.row.name }}</p>
@@ -56,21 +67,18 @@
               </el-table-column>
               <el-table-column
                   label="nepId"
-                  prop="nepId"
-                  width="180">
+                  prop="nepId">
               </el-table-column>
 
               <el-table-column
                   label="nepType"
-                  prop="nepType"
-                  width="180">
+                  prop="nepType">
               </el-table-column>
               <el-table-column
                   label="nepDescription"
-                  prop="nepDescription"
-                  width="180">
+                  prop="nepDescription">
               </el-table-column>
-              <el-table-column label="操作" prop="operation">
+              <el-table-column label="操作" prop="operation" >
                 <template slot-scope="scope">
                   <el-button
                       size="mini"
@@ -102,21 +110,24 @@
 <script>
 import moment from "moment";
 import http from "@/utils/request"
+import Cookie from "js-cookie"
 
 export default {
   data() {
     return {
       changeForm:{
         id:'',
+        nepId:'',
         nepType:'',
         nepDescription:'',
       },
       rules:{
         nepType:[
+          {}
         ],
         nepDescription:[
         ],
-        id:[
+        nepId:[
           { required: true, message: '请输入功能点id', trigger: 'blur' }
         ],
       },
@@ -125,11 +136,27 @@ export default {
       showTableData: [],
       pageSize: 10,
       currentPage: 1,
-      total: 0
+      total: 0,
+      fileUrl:''
     }
   },
   methods: {
-
+    onClick(){
+       this.$router.push('/ResultSCEFile')
+      /*let a=document.createElement('a')
+      a.href = this.fileUrl
+      a.download = "result_SCE_file"
+      a.click()
+      console.log(this.fileUrl)*/
+    },
+    getSCEFile(){
+      let param1 = new URLSearchParams();
+      param1.append('projectId',Cookie.get('projectId'));
+      http.post('http://192.168.159.240:25005/pluto/docx/downloadDocx', param1).then(({data}) => {
+        const FileUrl = data.data
+        this.fileUrl = FileUrl
+      })
+    },
     tableRowClassName({row, rowIndex}) {
       /*console.log(row.id)*/
       if(row.nepType===1){
@@ -164,7 +191,7 @@ export default {
     onSubmit: function () {
       this.$refs.changeForm.validate((valid) => {
         if (valid) {
-          let Id=this.changeForm.id
+          let Id=this.changeForm.nepId
           console.log(Id)
           let type=this.changeForm.nepType
           let description=this.changeForm.nepDescription
@@ -192,14 +219,14 @@ export default {
     },
     handleEdit(index, row) {
       this.dialogVisible=true
-      this.changeForm.id=row.id
+      this.changeForm.nepId=row.nepId
       console.log(index, row);
     },
     handleDelete(index, row) {
       console.log(index, row);
     },
     getList() {
-      http.post('http://192.168.159.240:25005/pluto/nep/queryPlutoNEPList', {projectId: 20}).then(({data}) => {
+      http.post('http://192.168.159.240:25005/pluto/nep/queryPlutoNEPList', {projectId: 1/*Cookie.get('projectId')*/}).then(({data}) => {
         const projects = data.data
         this.tableData = projects
         this.total = this.tableData.length || 0
@@ -215,6 +242,7 @@ export default {
   },
   mounted() {
     this.getList()
+    this.getSCEFile()
   }
 }
 </script>

@@ -38,6 +38,9 @@ export default {
 </script>
 
 <style scoped>
+body{
+  background: white;
+}
 .el-header{
   padding: 0;
 }

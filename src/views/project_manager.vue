@@ -74,6 +74,15 @@
               <span style="margin-left: 10px">{{ scope.row.modTime }}</span>
             </template>
           </el-table-column>
+          <el-table-column
+              prop="pkId"
+              label="请选择项目">
+            <template slot-scope="scope">
+              <el-button type="primary" @click="chooseProject(scope.row)">
+                选择项目
+              </el-button>
+            </template>
+          </el-table-column>
 
         </el-table>
         <div class="pager">
@@ -94,6 +103,7 @@
 import {getData, getProjects, getProjectStatus,createNewProject} from "@/api";
 import moment from "moment/moment";
 import axios from "axios";
+import Cookie from "js-cookie";
 import http from "@/utils/request";
 
 export default {
@@ -109,7 +119,11 @@ export default {
           { message: '123', trigger: 'blur' }
         ],
       },
-      tableData:[],
+      tableData:[
+        {
+          pkId:Number,
+        }
+      ],
       showTableData:[],
       projectList:[],
       total:0,//当前总条数
@@ -121,6 +135,12 @@ export default {
     };
   },
   methods: {
+    chooseProject(row){
+      Cookie.set('projectId',row.pkId)
+      this.$store.commit("setProjectId",row.pkId)
+      this.$router.push('software_cost_estimate')
+      console.log(this.$store.state.projectId)
+    },
     onSearch(){
       this.total=this.tableData.length
       let tables = [];
@@ -200,6 +220,7 @@ export default {
 </script>
 
 <style scoped lang="less">
+
 .project_manager{
   height: 100%;
   .manger_header{
