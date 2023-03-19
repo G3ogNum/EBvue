@@ -1,98 +1,261 @@
 <template>
-  <div class="cca">
-    <!-- 文件上传-->
-    <el-form :rules="rules" :model="dataForm" ref="dataForm" label-width="150px" @submit.native.prevent>
-      <el-form-item label="名称：" prop="name">
-        <el-input type="text" v-model.trim="dataForm.name" clearable></el-input>
-      </el-form-item>
-      <el-form-item label="文件：" prop="file" >
-        <el-upload
-            class="upload-import"
-            ref="uploadImport"
-            :http-request="httpRequest"
-            action=""
-            :on-remove="handleRemove"
-            :file-list="fileList"
-            :limit="1"
-        :on-change="handleChange"
-        :auto-upload="false"
-        accept="application/zip,.zip">
-        <el-button v-show="!hasFile" slot="trigger" size="small" type="primary" >选取文件</el-button>
-        <div slot="tip" class="el-upload__tip">只能上传zip文件，且不超过10M</div>
-        </el-upload>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="submitUpload">提交</el-button>
-        <el-button @click="resetForm('ruleForm')">重置</el-button>
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-      </el-form-item>
-    </el-form>
+
+  <div class="SCE">
+
+    <el-row>
+      <el-col :span="24">
+        <div class="grid-content bg-purple-dark">
+          <el-card class="box-card" style="margin-bottom: 20px">
+            <el-form ref="form" :model="form" label-width="80px">
+              <el-form-item label="选择文件" prop="isUploaded">
+                <el-upload
+                    class="upload-demo"
+                    :headers="headers"
+                    ref="upload"
+                    :rules="rules"
+                    :action="url"
+                    :directory="true"
+                    :on-preview="handlePreview"
+                    :on-remove="handleRemove"
+                    :on-change="handleChange"
+                    :before-upload="beforeUpload"
+                    :show-file-list="false"
+                    multiple:true
+                    :with-credentials="true"
+                    :auto-upload="false"
+                    :on-exceed="handleExceed"
+                    :data="upData"
+                    :disabled="false"
+                    :file-list="form.fileList">
+                  <el-button ref="btn" size="small" type="primary"
+
+                         @click="handleAddFolder"    :disabled="false">点击上传</el-button>
+                  <div slot="tip" class="el-upload__tip">只能上传docx/doc文件</div>
+                  <div slot="tip" class="el-upload__tip" style="color: red" v-show="(this.status.isUploaded === 1)">*已上传文件请勿重复上传</div>
+                </el-upload>
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click="onSubmit">提交</el-button>
+              </el-form-item>
+            </el-form>
+          </el-card>
+          <el-card class="box-card">
+            <div class="xq_border">
+              <div style="margin-top: 20px;margin-left: 20px">
+                <h2>需求规范</h2>
+              </div>
+              <div class="rf_table">
+                <table>
+                  <thead>
+                  <tr>
+                    <th>文档名称</th>
+                    <th>内容说明</th>
+                    <th>下载</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr>
+                    <td>CSBMK-2022</td>
+                    <td>2022年中国软件行业基数标准</td>
+                    <td><a href="./files/CSBMK-2022年中国软件行业基准数据.pdf"
+                           download="2022年中国软件行业基准数据">下载</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>GBT36964-2018</td>
+                    <td>中华人民共和国国家标准软件开发成本度量规范</td>
+                    <td><a href="./files/国家标准《软件工程软件开发成本度量规范》GBT36964-2018.pdf"
+                           download="中华人民共和国国家标准软件开发成本度量规范">下载</a></td>
+                  </tr>
+                  <!--              <tr>
+                                  <td>CSBMK-2022</td>
+                                  <td>2022年中国软件行业基数标准</td>
+                                  <td><el-link type="primary" style="margin-left: 80%" @click="downloadDoc">下载完整的排版实例</el-link>
+
+                                  </td>
+                                </tr>-->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </el-card>
+        </div>
+      </el-col>
+    </el-row>
   </div>
+
+
 </template>
+
 <script>
-import axios from "axios";
-import dataForm from "mockjs";
+import {getData, getProjectStatus} from "@/api";
+import request from "@/utils/request";
+import Cookie from "js-cookie";
+
 export default {
-  data(){
+
+  data: function () {
     return {
+      rules:{
+        isUploaded: [
+          {  message: '已上传过文件请勿重复上传', trigger: 'blur' },
+          { required: true, message: '请选择项目', trigger: 'blur' },
+        ],
+      },
+      status: {},
+
       dataForm: {
+        Folder:'',
         name: '',
         file: null
       },
-      rules: {
-        name: [
-          {required: true, message: "请输入名称", trigger: "blur"},
-          {max: 50, message: "最长可输入50个字符", trigger: "blur"},
-          {validator: isvalidatName, trigger: "blur" },
-        ],
-        file: [
-          {required: true, message: "请选择上传文件", trigger: "blur"},
-        ]
+      headers: {
+        token: this.$store.state.token,
+        Authorization: 'eyJraWQiOiIzIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJyb2xlIjoiUk9MRV9lblVzZXIifQ.7F40UMvbJRMUPlpqduVvZmB9aNFyVx2hPNgi_YTKYUs'
       },
-      hasFile: false,
-      fileList: []
-      }
+      url: "",
+      form: {
+        projectId: '',
+
+      },
+      fileList: [
+      ],
+
+    };
+  },
+  methods: {
+    // 点击文件夹路径上传按钮
+    handleAddFolder () {
+      this.$nextTick(() => {
+        this.$refs.upload.$children[0].$refs.input.webkitdirectory = true
+      })
     },
-        methods: {
-      handleRemove(file, fileList) {
-        if (!fileList.length) {
-          this.hasFile = false;
-        }
-        this.dataForm.file = null;
-      },
-      handleChange(file, fileList) {
-        if (fileList.length >= 2) {
-          return;
-        }
-        if (fileList.length === 1) {
-          this.hasFile = true;
-        }
-        this.dataForm.file = file;
-      },
-      //确定按钮
-      //调用组件upload的submit方法，从而触发httpRequest方法，实现手动上传
-      submitUpload() {
-        this.$refs.dataForm.validate(valid => {
-          if(vaild){
-            this.$refs.uploadImport.submit();
-          }
-        })
-      },
-      httpRequest(param) {
-        let fd = new FormData();
-        fd.append('file', param.file); // 传文件
-        fd.append('name',  dataForm.name);
-        //dataPar.file.raw
-        axios.post('/interface/importProject', fd , {
-          headers: {'Content-Type': 'multipart/form-data'},//定义内容格式,很重要
-          timeout: 20000,
-        }).then(response => {
-          console.log(res)
-          //接口成功调用params上的onSuccess函数，会触发默认的successHandler函数
-          //这样可以用自带的ui等
-          ///params.onSuccess({name: 'eric'})
-        }).catch(err =>{})
+    // 文件夹路径上传之前钩子函数
+    beforeUpload (file) {
+      // file.path为文件夹的路径
+      this.form.Folder = file.path
+    },
+    isDisabled(){
+      if(!Cookie.get('projectId')){
+        this.$message.warning('请选择项目')
+        return true
+      }
+      else if(this.status.isUploaded === 1)return true
+      return false
+    },
+
+
+
+    handleChange(file, fileList) {
+
+      console.log(fileList)
+      this.form.projectId = 6
+      /* fileList[0].name*/
+    },
+    onSubmit: function () {
+      localStorage.setItem('token', this.token)
+      this.status.isUploaded=1
+      this.$refs.upload.submit();
+
+      /* console.log('submit!');
+       request({
+         method:"POST",
+         url:'',
+         params: this.form,
+       })*/
+    },
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
+    },
+    handlePreview(file) {
+      console.log(file);
+    },
+    handleExceed(files, fileList) {
+
+      this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+    },
+    beforeRemove(file, fileList) {
+      return this.$confirm(`确定移除 ${file.name}？`);
+    },
+    beforeAvatarUpload(file) {
+      const isDoc = file.type === '.DOC,.DOCX';
+      /* const isLt2M = file.size / 1024 / 1024 < 2;*/
+
+      if (!isDoc) {
+        this.$message.error('上传头像图片只能是 docx或doc 格式!');
+      }
+      /*if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!');
+      }*/
+      return isDoc /*&& isLt2M*/;
+    },
+  },
+  mounted() {
+    getProjectStatus().then(({data}) => {
+      const status = data.data
+      this.status = status
+      const file={
+        name:this.status.docxFileName,
+        url:'',
+      }
+      this.fileList[0]=file
+      this.handleChange(file,this.fileList)
+      console.log(this.fileList[0])
+
+    })
+  },
+  computed: {
+    // 这里定义上传文件时携带的参数，即表单数据
+    upData: function () {
+      return {
+        projectId: 6,
+        /*body: JSON.stringify(this.form)*/
       }
     }
-  }
+  },
+//123123
+}
 </script>
+
+<style scoped lang="less">
+.xq_border {
+  width: 99%;
+  height: 99%;
+  border: 2px solid #cccccc;
+  border-radius: 5px;
+  padding: 0px 0px 20px 0px;
+}
+
+.rf_table {
+  padding: 0;
+  overflow: hidden;
+  margin: 0;
+  background-color: #fff;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    thead tr th {
+      background-color: rgba(245, 245, 250, 1);
+    }
+
+    thead tr th,
+    tbody tr td {
+      text-align: center;
+      padding: 20px;
+    }
+
+    tbody tr td {
+      border-top: 1px solid rgb(200, 200, 200);
+      border-bottom: 1px solid rgb(200, 200, 200);
+    }
+  }
+}
+
+@media (max-width: 1800px) {
+  .rf_table table {
+
+  }
+}
+</style>

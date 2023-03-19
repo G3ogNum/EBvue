@@ -7,6 +7,16 @@ import store from "@/store";
 import './api/mock'
 import moment from "moment";
 import Cookie from "js-cookie";
+import fontawesome from '@fortawesome/fontawesome'
+import 'font-awesome/css/font-awesome.css'
+import solid from '@fortawesome/fontawesome-free-solid'
+import brands from '@fortawesome/fontawesome-free-brands'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+fontawesome.library.add(solid)
+fontawesome.library.add(brands)
+
+Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.filter('dateFormat',(dateStr,pattern='YYYY-DD-MM HH:mm:ss')=>{
   return moment(dateStr).format(pattern)
 })

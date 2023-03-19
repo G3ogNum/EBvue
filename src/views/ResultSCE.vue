@@ -41,7 +41,7 @@
           <div class="common-table">
             <el-table
                 :data="showTableData"
-
+                v-loading="loading"
                 height="700px"
                 :row-class-name="tableRowClassName">
               <el-table-column
@@ -137,7 +137,8 @@ export default {
       pageSize: 10,
       currentPage: 1,
       total: 0,
-      fileUrl:''
+      fileUrl:'',
+      loading:true
     }
   },
   methods: {
@@ -155,6 +156,7 @@ export default {
       http.post('http://192.168.159.240:25005/pluto/docx/downloadDocx', param1).then(({data}) => {
         const FileUrl = data.data
         this.fileUrl = FileUrl
+
       })
     },
     tableRowClassName({row, rowIndex}) {
@@ -240,6 +242,9 @@ export default {
       })
     },
   },
+  updated(){
+    this.loading=false
+  },
   mounted() {
     this.getList()
     this.getSCEFile()
@@ -248,6 +253,9 @@ export default {
 </script>
 
 <style lang="less">
+body {
+  margin: 0;
+}
 .ResultSCE {
   height: 100%;
 

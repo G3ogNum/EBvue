@@ -32,6 +32,7 @@
       <div class="common-table">
         <el-table
             stripe
+            v-loading="loading"
             height="90%"
             :data="showTableData"
             style="width: 100%"
@@ -131,7 +132,8 @@ export default {
       pageSize:10,
       pkInfo:{
         projectName:''
-      }
+      },
+      loading:true,
     };
   },
   methods: {
@@ -212,6 +214,9 @@ export default {
       }
       console.log(this.currentPage)
     },
+  },
+  updated() {
+    this.loading=false
   },
   mounted() {
   this.getList()

@@ -31,6 +31,7 @@
                              :disabled="isDisabled">点击上传</el-button>
                   <div slot="tip" class="el-upload__tip">只能上传docx/doc文件</div>
                   <div slot="tip" class="el-upload__tip" style="color: red" v-show="(this.status.isUploaded === 1)">*已上传文件请勿重复上传</div>
+                  <div slot="tip" class="el-upload__tip" style="color: red" v-show="isProjectChosen">请先选择项目</div>
                 </el-upload>
               </el-form-item>
               <el-form-item>
@@ -102,7 +103,8 @@ export default {
         ],
       },
       status: {},
-
+      isDisabled:true,
+      isProjectChosen:true,
       dataForm: {
         name: '',
         file: null
@@ -122,21 +124,23 @@ export default {
     };
   },
   methods: {
-    isDisabled(){
-      if(!Cookie.get('projectId')){
-        this.$message.warning('请选择项目')
-        return true
-      }
-      else if(this.status.isUploaded === 1)return true
-      return false
+    anyProjectChosen(){
+      let pno=Cookie.get('projectId')
+      console.log(pno)
+      if(pno===null){
+        this.isProjectChosen=true
+      }else this.isProjectChosen=false
+    },
+    disableController(){
+       if(this.status.isUploaded === 1)this.isDisabled= true
+       else this.isDisabled= false
     },
 
 
 
     handleChange(file, fileList) {
 
-      console.log(fileList)
-      this.form.projectId = 6
+      this.form.projectId = this.status.projectId
       /* fileList[0].name*/
     },
     onSubmit: function () {
@@ -152,10 +156,10 @@ export default {
        })*/
     },
     handleRemove(file, fileList) {
-      console.log(file, fileList);
+
     },
     handlePreview(file) {
-      console.log(file);
+
     },
     handleExceed(files, fileList) {
 
@@ -187,8 +191,8 @@ export default {
       }
       this.fileList[0]=file
       this.handleChange(file,this.fileList)
-      console.log(this.fileList[0])
-
+      this.anyProjectChosen()
+      this.disableController()
     })
   },
   computed: {

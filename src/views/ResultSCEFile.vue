@@ -2,11 +2,33 @@
   <div class="ResultSCEFile">
 
     <el-row>
-      <el-col :span="6" style="margin-left: 20px;margin-right: 20px; ">
-          <el-card class="box-card" style="height: 85vh">
+      <el-col :span="24" style="margin-bottom: 20px">
+        <el-card class="box-card">
+          <div class="manger_header">
+            <el-button type="primary" @click="dialogVisible=true">
+              智能识别
+            </el-button>
+            <el-button type="primary" @click="dialogVisible=true">
+              成本评估
+            </el-button>
+            <el-button type="primary" @click="dialogVisible=true">
+              调整因子
+            </el-button>
+            <el-button type="primary" @click="dialogVisible=true">
+              申请复核
+            </el-button>
+            <el-button type="primary" @click="dialogVisible=true">
+              归档
+            </el-button>
+          </div>
+        </el-card>
+      </el-col>
+      <el-col :span="6" style="margin-left: 0px;margin-right: 30px; ">
+          <el-card class="box-card" style="height: 75vh">
             <div class="custom-tree-container">
               <div class="video-tree">
                 <el-tree
+                    v-loading="loading"
                     :data="showData"
                     show-checkbox
                     node-key="id"
@@ -33,8 +55,8 @@
             </div>
           </el-card>
         </el-col>
-      <el-col :span="13"style="margin-right: 20px">
-        <el-card class="box-card" style="height: 85vh" :data="fileData">
+      <el-col :span="13"style="margin-right: 30px">
+        <el-card class="box-card" style="height: 75vh" :data="fileData">
           <div class="video-tree" id="ctt">
             <h5 v-for="item in this.fileData" :id="item.metaId">
               {{item.metaId+item.metaTitle}}
@@ -44,7 +66,7 @@
         </el-card>
       </el-col>
       <el-col :span="4" >
-        <el-card class="box-card" style="height: 85vh">
+        <el-card class="box-card" style="height: 75vh">
 
         </el-card>
       </el-col>
@@ -80,6 +102,7 @@ export default {
       proProps:{
         label:'nepDescription',
       },
+      loading:true,
     };
   },
 
@@ -103,6 +126,7 @@ export default {
         this.showData.forEach(function (item){
           item.nepDescription=item.metaId+item.nepDescription
         })
+        this.loading=false
       })
       http.post('http://192.168.159.240:25005/pluto/docx/queryMetaList', {projectId: 1/*Cookie.get('projectId')*/}).then(({data}) => {
         this.fileData = data.data
@@ -133,8 +157,11 @@ export default {
   },
   mounted() {
     this.getList()
+  },
+  updated() {
+
   }
-};
+}
 </script>
 
 <style scoped lang="less">
@@ -162,11 +189,9 @@ export default {
  box-sizing: border-box;
 
  /*设置纵向滚动条、横向滚动条要配合下面的.el-tree-node的样式才能实现*/
- overflow-y: scroll;
+  overflow-y: scroll;
   overflow-x: scroll;
-  white-space: nowrap;
 
-  ::-webkit-scrollbar{ display: none; }
     h5{
       font-size:18px ;
       font-weight: 400;
