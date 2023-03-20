@@ -55,7 +55,7 @@
             </div>
           </el-card>
         </el-col>
-      <el-col :span="13"style="margin-right: 30px">
+      <el-col :span="11"style="margin-right: 30px">
         <el-card class="box-card" style="height: 75vh" :data="fileData">
           <div class="video-tree" id="ctt">
             <h5 v-for="item in this.fileData" :id="item.metaId">
@@ -65,9 +65,27 @@
           </div>
         </el-card>
       </el-col>
-      <el-col :span="4" >
+      <el-col :span="6" >
         <el-card class="box-card" style="height: 75vh">
-
+          <div class="video-tree">
+            <el-table
+                stripe
+                :data="tableData"
+                style="width: 100%">
+              <el-table-column
+                  prop="date"
+                  label="计数项">
+              </el-table-column>
+              <el-table-column
+                  prop="name"
+                  label="类型">
+              </el-table-column>
+              <el-table-column
+                  prop="address"
+                  label="复用度">
+              </el-table-column>
+            </el-table>
+          </div>
         </el-card>
       </el-col>
 
@@ -98,6 +116,72 @@ export default {
       value: [1, 4],
       showData:[],
       fileData:[],
+      tableData: [{
+        date: '授权用户',
+        name: 'ILF',
+        address: '1'
+      }, {
+        date: '客户',
+        name: 'ILF',
+        address: '1'
+      }, {
+        date: '投保人',
+        name: 'EI',
+        address: '1'
+      }, {
+        date: '投保人新增',
+        name: 'EO',
+        address: '1'
+      },
+        {
+          date: '投保人查询',
+          name: 'ILF',
+          address: '1'
+        }, {
+          date: '客户管理',
+          name: 'EO',
+          address: '1'
+        }, {
+          date: '参考输入',
+          name: 'EI',
+          address: '1'
+        }, {
+          date: '投保人修改',
+          name: 'EO',
+          address: '1'
+        },{
+          date: '投保人查看',
+          name: 'ILF',
+          address: '1'
+        }, {
+          date: '投保人删除',
+          name: 'EO',
+          address: '1'
+        }, {
+          date: '被保人新增',
+          name: 'EI',
+          address: '1'
+        }, {
+          date: '被保人修改',
+          name: 'ILF',
+          address: '1'
+        },{
+          date: '被保人维护',
+          name: 'ILF',
+          address: '1'
+        }, {
+          date: '被保人查询',
+          name: 'EO',
+          address: '1'
+        }, {
+          date: '被保人新增',
+          name: 'EI',
+          address: '1'
+        }, {
+          date: '被保人修改',
+          name: 'ILF',
+          address: '1'
+        },],
       metaTitle:'',
       proProps:{
         label:'nepDescription',
@@ -110,7 +194,7 @@ export default {
     treeClick(node){
       let target=document.getElementById(node.metaId)
       let high=target.offsetTop
-      document.getElementById('ctt').scrollTop=high-20
+      document.getElementById('ctt').scrollTop=high-120
       console.log(node.metaId)
     },
     upadte(data) {
@@ -179,7 +263,7 @@ export default {
   width: 0 !important;
 }
 ::-webkit-scrollbar {
-  width: 0 !important;height: 0;
+  width: 0 !important;height: 0 !important;
 }
 
 .video-tree{
@@ -190,7 +274,7 @@ export default {
 
  /*设置纵向滚动条、横向滚动条要配合下面的.el-tree-node的样式才能实现*/
   overflow-y: scroll;
-  overflow-x: scroll;
+  /*overflow-x: scroll;*/
 
     h5{
       font-size:18px ;
