@@ -7,7 +7,7 @@
     <div class="r_header">
       <el-dropdown trigger="click">
   <span class="el-dropdown-link">
-    <img class="user" src="../assets/image/头像琴子.png" alt="">
+    <img class="user" src="../assets/image/userImg.png" alt="">
   </span>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item @click.native="handleCommand(item)" v-for="item in this.menuData">{{item.label}}</el-dropdown-item>

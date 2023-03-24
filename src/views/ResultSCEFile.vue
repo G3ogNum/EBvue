@@ -2,6 +2,17 @@
   <div class="ResultSCEFile">
 
     <el-row>
+      <el-dialog
+          title="提示"
+          :visible.sync="dialogVisible"
+          width="30%"
+          :before-close="handleClose">
+
+        <span slot="footer" class="dialog-footer">
+    <el-button @click="handleClose">取 消</el-button>
+    <el-button type="primary" @click="dialogVisible=false">确 定</el-button>
+  </span>
+      </el-dialog>
       <el-col :span="24" style="margin-bottom: 20px">
         <el-card class="box-card">
           <div class="manger_header">
@@ -23,19 +34,19 @@
           </div>
         </el-card>
       </el-col>
-      <el-col :span="6" style="margin-left: 0px;margin-right: 30px; ">
-          <el-card class="box-card" style="height: 75vh">
-            <div class="custom-tree-container">
-              <div class="video-tree">
-                <el-tree
-                    v-loading="loading"
-                    :data="showData"
-                    show-checkbox
-                    node-key="id"
-                    default-expand-all
-                    :props="proProps"
-                    @node-click="treeClick"
-                    :expand-on-click-node="true">
+      <el-col :span="6" style="margin-left: 0px;margin-right: 2%; ">
+        <el-card class="box-card" style="height: 75vh">
+          <div class="custom-tree-container">
+            <div class="video-tree">
+              <el-tree
+                  v-loading="loading"
+                  :data="showData"
+                  show-checkbox
+                  node-key="id"
+                  default-expand-all
+                  :props="proProps"
+                  @node-click="treeClick"
+                  :expand-on-click-node="true">
 
                   <span class="custom-tree-node" slot-scope="{ node, data  }">
                   <span>{{ node.label }}</span>
@@ -50,22 +61,22 @@
                   </span>
                 </span>
 
-                </el-tree>
-              </div>
+              </el-tree>
             </div>
-          </el-card>
-        </el-col>
-      <el-col :span="11"style="margin-right: 30px">
+          </div>
+        </el-card>
+      </el-col>
+      <el-col :span="11" style="margin-right: 2%">
         <el-card class="box-card" style="height: 75vh" :data="fileData">
           <div class="video-tree" id="ctt">
             <h5 v-for="item in this.fileData" :id="item.metaId">
-              {{item.metaId+item.metaTitle}}
-              <p>{{item.metaContent}}</p>
+              {{ item.metaId + item.metaTitle }}
+              <p>{{ item.metaContent }}</p>
             </h5>
           </div>
         </el-card>
       </el-col>
-      <el-col :span="6" >
+      <el-col :span="6">
         <el-card class="box-card" style="height: 75vh">
           <div class="video-tree">
             <el-table
@@ -105,17 +116,18 @@ export default {
       for (let i = 1; i <= 15; i++) {
         data.push({
           key: i,
-          label: `备选项 ${ i }`,
+          label: `备选项 ${i}`,
           disabled: i % 4 === 0
         });
       }
       return data;
     };
     return {
+      dialogVisible: false,
       data: generateData(),
       value: [1, 4],
-      showData:[],
-      fileData:[],
+      showData: [],
+      fileData: [],
       tableData: [{
         date: '授权用户',
         name: 'ILF',
@@ -149,7 +161,7 @@ export default {
           date: '投保人修改',
           name: 'EO',
           address: '1'
-        },{
+        }, {
           date: '投保人查看',
           name: 'ILF',
           address: '1'
@@ -165,7 +177,7 @@ export default {
           date: '被保人修改',
           name: 'ILF',
           address: '1'
-        },{
+        }, {
           date: '被保人维护',
           name: 'ILF',
           address: '1'
@@ -182,19 +194,23 @@ export default {
           name: 'ILF',
           address: '1'
         },],
-      metaTitle:'',
-      proProps:{
-        label:'nepDescription',
+      metaTitle: '',
+      proProps: {
+        label: 'nepDescription',
       },
-      loading:true,
+      loading: true,
     };
   },
 
   methods: {
-    treeClick(node){
-      let target=document.getElementById(node.metaId)
-      let high=target.offsetTop
-      document.getElementById('ctt').scrollTop=high-120
+    handleClose(done) {
+      this.dialogVisible=false
+
+    },
+    treeClick(node) {
+      let target = document.getElementById(node.metaId)
+      let high = target.offsetTop
+      document.getElementById('ctt').scrollTop = high - 120
       console.log(node.metaId)
     },
     upadte(data) {
@@ -207,15 +223,15 @@ export default {
     getList() {
       http.post('http://192.168.159.240:25005/pluto/nep/queryPlutoNEPList', {projectId: 1/*Cookie.get('projectId')*/}).then(({data}) => {
         this.showData = data.data
-        this.showData.forEach(function (item){
-          item.nepDescription=item.metaId+item.nepDescription
+        this.showData.forEach(function (item) {
+          item.nepDescription = item.metaId + item.nepDescription
         })
-        this.loading=false
+        this.loading = false
       })
       http.post('http://192.168.159.240:25005/pluto/docx/queryMetaList', {projectId: 1/*Cookie.get('projectId')*/}).then(({data}) => {
         this.fileData = data.data
         /*console.log(this.fileData)*/
-        this.fileData.forEach(function (item){
+        this.fileData.forEach(function (item) {
           /*item.metaId+=item.metaTitle*/
         })
       })
@@ -259,45 +275,50 @@ export default {
   font-size: 14px;
   padding-right: 8px;
 }
+
 ::-webkit-scrollbar {
   width: 0 !important;
 }
+
 ::-webkit-scrollbar {
-  width: 0 !important;height: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
-.video-tree{
+.video-tree {
 
- height: 700px;
- padding:10px 0;
- box-sizing: border-box;
+  height: 700px;
+  padding: 10px 0;
+  box-sizing: border-box;
 
- /*设置纵向滚动条、横向滚动条要配合下面的.el-tree-node的样式才能实现*/
+  /*设置纵向滚动条、横向滚动条要配合下面的.el-tree-node的样式才能实现*/
   overflow-y: scroll;
   /*overflow-x: scroll;*/
 
-    h5{
-      font-size:18px ;
-      font-weight: 400;
-      p{
-        font-size:14px ;
-        font-weight: 400;
-      }
-    }
+  h5 {
+    font-size: 18px;
+    font-weight: 400;
 
-    >.el-tree{
-      >.el-tree-node{
+    p {
+      font-size: 14px;
+      font-weight: 400;
+    }
+  }
+
+  > .el-tree {
+    > .el-tree-node {
       /*设置横向滚动条*/
       min-width: 100%;
       display: inline-block;
 
 
-    /*设置根节点隐藏*/
-        >.el-tree-node__content{
-          display: none;
-        }
+      /*设置根节点隐藏*/
+
+      > .el-tree-node__content {
+        display: none;
       }
     }
+  }
 }
 
 </style>

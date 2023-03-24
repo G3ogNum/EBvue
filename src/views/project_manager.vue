@@ -129,7 +129,7 @@ export default {
       projectList:[],
       total:0,//当前总条数
       currentPage:1,
-      pageSize:10,
+      pageSize:8,
       pkInfo:{
         projectName:''
       },

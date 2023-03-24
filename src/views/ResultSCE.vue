@@ -34,7 +34,7 @@
     </el-dialog>
     <el-row>
       <el-col :span="24">
-        <el-card class="box-card" style="height: 800px">
+        <el-card class="box-card" style="height: 85vh">
           <div class="ResultSCE_header">
             <el-button type="primary" @click="onClick">查看详情</el-button>
           </div>
@@ -42,7 +42,7 @@
             <el-table
                 :data="showTableData"
                 v-loading="loading"
-                height="700px"
+                height="65vh"
                 :row-class-name="tableRowClassName">
               <el-table-column
                   label="id"
@@ -134,7 +134,7 @@ export default {
       dialogVisible: false,
       tableData: [],
       showTableData: [],
-      pageSize: 10,
+      pageSize: 8,
       currentPage: 1,
       total: 0,
       fileUrl:'',

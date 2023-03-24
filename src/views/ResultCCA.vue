@@ -3,15 +3,15 @@
     <el-row>
       <el-col :span="10">
         <el-col :span="8" style="width: 96%">
-          <el-card class="box-card" style="margin-right: 20px">
+          <el-card class="box-card" style="margin-right: 2%">
             <!--折线图-->
             <div ref="echarts2" style="height: 280px">
 
             </div>
           </el-card>
         </el-col>
-        <el-col :span="8" style="width: 100%">
-          <el-card class="box-card" style="margin-top: 20px ;width: 603px">
+        <el-col :span="8" style="width: 90%">
+          <el-card class="box-card" style="margin-top: 20px ">
             <!--柱状图-->
             <div ref="echarts3" style="height: 280px">
 
@@ -26,7 +26,7 @@
           </el-card>
         </el-col>-->
       </el-col>
-      <el-col :span="12">
+      <el-col :span="13">
         <el-card class="box-card CR" >
           <article class="code_border" v-for="item in this.tableData">
             <div class="title" >
@@ -83,7 +83,11 @@
         </el-card>
 
       </el-col>
+<!--      <el-col :span="5" style="margin-left: 2%;">
+        <el-card class="box-card" style="height: 85vh;">
 
+        </el-card>
+      </el-col>-->
     </el-row>
   </div>
 </template>
@@ -95,7 +99,7 @@ export default {
   data(){
     return{
       tableData: [
-        {},{},
+        {},{},{}
       ],
       tableLabel:{},
       countData:[],
@@ -234,7 +238,7 @@ export default {
 .CR{
   overflow-y: scroll;
   white-space: nowrap;
-  height: 700px;
+  height: 85vh;
 }
 ::-webkit-scrollbar {
   width: 0 !important;
@@ -257,7 +261,6 @@ export default {
 }
 .title{
   display: inline-block;
-  margin-top: 20px;
   margin-left: 20px;
 }
 .tabnav {
@@ -298,6 +301,7 @@ export default {
   padding:  20px;
   p{
     margin-bottom: 0 ;
+    margin-top: 0;
   }
 }
 .updateTimeAndComponentLanguage{
@@ -306,6 +310,8 @@ export default {
   ul{
     list-style: none;
     padding: 0px;
+    margin-bottom: 0;
+    margin-top: 0;
     li{
       display: inline-block;
       list-style: none;

@@ -1,6 +1,6 @@
 <template>
 
-  <div class="SCE">
+  <div class="CCA">
 
     <el-row>
       <el-col :span="24">
@@ -14,24 +14,24 @@
                     ref="upload"
                     :rules="rules"
                     :action="url"
-                    :directory="true"
                     :on-preview="handlePreview"
                     :on-remove="handleRemove"
                     :on-change="handleChange"
-                    :before-upload="beforeUpload"
-                    :show-file-list="false"
-                    multiple:true
+                    accept=".ZIP"
+                    multiple:false
                     :with-credentials="true"
                     :auto-upload="false"
+                    :limit="1"
                     :on-exceed="handleExceed"
                     :data="upData"
-                    :disabled="false"
+                    :disabled="isDisabled"
                     :file-list="form.fileList">
                   <el-button ref="btn" size="small" type="primary"
 
-                         @click="handleAddFolder"    :disabled="false">点击上传</el-button>
-                  <div slot="tip" class="el-upload__tip">只能上传docx/doc文件</div>
+                             :disabled="isDisabled">点击上传</el-button>
+                  <div slot="tip" class="el-upload__tip">只能上传zip压缩文件</div>
                   <div slot="tip" class="el-upload__tip" style="color: red" v-show="(this.status.isUploaded === 1)">*已上传文件请勿重复上传</div>
+                  <div slot="tip" class="el-upload__tip" style="color: red" v-show="isProjectChosen">请先选择项目</div>
                 </el-upload>
               </el-form-item>
               <el-form-item>
@@ -103,9 +103,9 @@ export default {
         ],
       },
       status: {},
-
+      isDisabled:true,
+      isProjectChosen:true,
       dataForm: {
-        Folder:'',
         name: '',
         file: null
       },
@@ -113,7 +113,7 @@ export default {
         token: this.$store.state.token,
         Authorization: 'eyJraWQiOiIzIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJyb2xlIjoiUk9MRV9lblVzZXIifQ.7F40UMvbJRMUPlpqduVvZmB9aNFyVx2hPNgi_YTKYUs'
       },
-      url: "",
+      url: "http://192.168.159.240:25005/pluto/docx/",
       form: {
         projectId: '',
 
@@ -124,32 +124,23 @@ export default {
     };
   },
   methods: {
-    // 点击文件夹路径上传按钮
-    handleAddFolder () {
-      this.$nextTick(() => {
-        this.$refs.upload.$children[0].$refs.input.webkitdirectory = true
-      })
+    anyProjectChosen(){
+      let pno=Cookie.get('projectId')
+      console.log(pno)
+      if(pno===null){
+        this.isProjectChosen=true
+      }else this.isProjectChosen=false
     },
-    // 文件夹路径上传之前钩子函数
-    beforeUpload (file) {
-      // file.path为文件夹的路径
-      this.form.Folder = file.path
-    },
-    isDisabled(){
-      if(!Cookie.get('projectId')){
-        this.$message.warning('请选择项目')
-        return true
-      }
-      else if(this.status.isUploaded === 1)return true
-      return false
+    disableController(){
+      if(this.status.isUploaded === 1)this.isDisabled= true
+      else this.isDisabled= false
     },
 
 
 
     handleChange(file, fileList) {
 
-      console.log(fileList)
-      this.form.projectId = 6
+      this.form.projectId = this.status.projectId
       /* fileList[0].name*/
     },
     onSubmit: function () {
@@ -165,10 +156,10 @@ export default {
        })*/
     },
     handleRemove(file, fileList) {
-      console.log(file, fileList);
+
     },
     handlePreview(file) {
-      console.log(file);
+
     },
     handleExceed(files, fileList) {
 
@@ -200,8 +191,8 @@ export default {
       }
       this.fileList[0]=file
       this.handleChange(file,this.fileList)
-      console.log(this.fileList[0])
-
+      this.anyProjectChosen()
+      this.disableController()
     })
   },
   computed: {
