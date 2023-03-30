@@ -6,12 +6,12 @@ export default {
         for(let i=0;i<7;i++){
             List.push(
                 Mock.mock({
-                    苹果:Mock.Random.float(100,8000,0,0),
-                    vivo:Mock.Random.float(100,8000,0,0),
-                    oppo:Mock.Random.float(100,8000,0,0),
-                    samsung:Mock.Random.float(100,8000,0,0),
-                    小米:Mock.Random.float(100,8000,0,0),
-                    华为:Mock.Random.float(100,8000,0,0),
+                    code1:Mock.Random.float(100,8000,0,0),
+                    code2:Mock.Random.float(100,8000,0,0),
+                    code3:Mock.Random.float(100,8000,0,0),
+                    code4:Mock.Random.float(100,8000,0,0),
+                    code5:Mock.Random.float(100,8000,0,0),
+                    code6:Mock.Random.float(100,8000,0,0),
                 })
             )
         }

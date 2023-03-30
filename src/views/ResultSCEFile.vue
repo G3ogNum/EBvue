@@ -5,13 +5,31 @@
       <el-dialog
           title="提示"
           :visible.sync="dialogVisible"
-          width="30%"
+          width="60%"
           :before-close="handleClose">
-
-        <span slot="footer" class="dialog-footer">
-    <el-button @click="handleClose">取 消</el-button>
-    <el-button type="primary" @click="dialogVisible=false">确 定</el-button>
-  </span>
+        <el-form ref="form" :model="sizeModForm" label-width="300px" size="mini">
+          <el-form-item :label="item[0].factorName" v-for="item in this.ModifyFactor1" style="display: inline-block">
+            <el-select  v-model="sizeModForm.factors[item[0].factorType-1]" placeholder="请选择">
+              <el-option :label="childItem.factorValue+'\t'+childItem.factorDescriptionA"
+               v-for="childItem in item"
+               :value="{factorType:childItem.factorType,
+               factorValue:childItem.factorValue,
+               pkId:childItem.pkId}">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item :label="item[0].factorName+' : '+item[0].factorDescriptionA" v-for="item in this.ModifyFactor2" style="display: inline-block">
+            <el-cascader
+                v-model="sizeModForm.factors[item[0].factorType-1]"
+                :options="options[item[0].factorType-4]">
+            </el-cascader>
+            <span class="demonstration"><font color="red"> *</font>{{ ' '+item[0].factorDescriptionB }}</span>
+          </el-form-item>
+          <el-form-item size="large" style="margin-left:25%;margin-top: 3%">
+            <el-button type="primary" @click="onSubmit">提交</el-button>
+            <el-button  @click="dialogVisible=false">取消</el-button>
+          </el-form-item>
+        </el-form>
       </el-dialog>
       <el-col :span="24" style="margin-bottom: 20px">
         <el-card class="box-card">
@@ -106,7 +124,7 @@
 
 <script>
 import http from "@/utils/request";
-
+import myFilter from "@/utils/filter";
 let id = 1000;
 
 export default {
@@ -123,6 +141,95 @@ export default {
       return data;
     };
     return {
+      ModifyFactor:[],
+      ModifyFactor1:[],
+      ModifyFactor2:[],
+      options:[
+          [
+            {
+              label:'-1 没有明示对分布式处理的需求事项',
+              value:{factorType:4,
+                factorValue:-1,
+                pkId:16}
+            },
+            {
+              label:' 0 通过网络进行客户端/服务器及网络基础计算机系统分布处理和传输',
+              value:{factorType:4,
+                factorValue:0,
+                pkId:17}
+            },
+            {
+              label:' 1 在多个服务器及处理器上同时相互执行计算机系统中的处理功能',
+              value:{factorType:4,
+                factorValue:1,
+                pkId:18}
+            },
+          ],
+        [
+          {
+            label:'-1 没有明示对性能的特别需求事项或活动，因此提供基本性能',
+            value:{factorType:4,
+              factorValue:-1,
+              pkId:19}
+          },
+          {
+            label:' 0 应答时间或处理率对高峰时间或所有业务时间都很重要，对连动系统结 束处理时间有限制',
+            value:{factorType:4,
+              factorValue:0,
+              pkId:20}
+          },
+          {
+            label:' 1 为满足性能需求事项，要求设计阶段进行性能分析，或在设计、开发阶 段使用分析工具',
+            value:{factorType:4,
+              factorValue:1,
+              pkId:21}
+          },
+        ],
+        [
+          {
+            label:'-1 没有明示对可靠性的特别需求事项或活动，因此提供基本的可靠性',
+            value:{factorType:4,
+              factorValue:-1,
+              pkId:22}
+          },
+          {
+            label:' 0 发生故障时可轻易修复，带来一定不便或经济损失',
+            value:{factorType:4,
+              factorValue:0,
+              pkId:23}
+          },
+          {
+            label:' 1 发生故障时很难修复，发生重大经济损失或有生命危害',
+            value:{factorType:4,
+              factorValue:1,
+              pkId:24}
+          },
+        ],
+        [
+          {
+            label:'-1 在相同用途的硬件或软件环境下运行',
+            value:{factorType:4,
+              factorValue:-1,
+              pkId:25}
+          },
+          {
+            label:' 0 在用途类似的硬件或软件环境下运行',
+            value:{factorType:4,
+              factorValue:0,
+              pkId:26}
+          },
+          {
+            label:' 1 在不同用途的硬件或软件环境下运行',
+            value:{factorType:4,
+              factorValue:1,
+              pkId:27}
+          },
+        ],
+      ],
+      sizeModForm:{
+          factors:[
+          ],
+        },
       dialogVisible: false,
       data: generateData(),
       value: [1, 4],
@@ -203,6 +310,12 @@ export default {
   },
 
   methods: {
+
+    onSubmit() {
+      console.log(this.sizeModForm.factors)
+      this.handleClose()
+
+    },
     handleClose(done) {
       this.dialogVisible=false
 
@@ -221,6 +334,31 @@ export default {
       data.children.push(newChild);
     },
     getList() {
+      http.post('http://192.168.159.240:25005/neptune/queryAllFactors').then(({data}) => {
+        this.ModifyFactor = data.data
+       /* console.log(this.ModifyFactor[0])*/
+        /*this.ModifyFactor.forEach((Data)=>{
+          Data.forEach((facInfo)=>{
+            facInfo.factorValue=myFilter.filters.number(facInfo.factorValue)
+            if(facInfo.factorDescriptionB){
+              facInfo.factorDescriptionA=facInfo.factorDescriptionA+'，'+facInfo.factorDescriptionB
+            }
+            if(facInfo.factorDescriptionC){
+              facInfo.factorDescriptionA=facInfo.factorDescriptionA+'，'+facInfo.factorDescriptionC
+            }
+          })
+        })*/
+        let cnt1=0;
+        let cnt2=0;
+        for(let i=0;i<this.ModifyFactor.length;i++){
+          if(this.ModifyFactor[i][0].factorDescriptionC){
+            this.ModifyFactor2[cnt2++]=this.ModifyFactor[i]
+          }else{
+            this.ModifyFactor1[cnt1++]=this.ModifyFactor[i]
+          }
+        }
+        console.log(this.ModifyFactor2)
+      })
       http.post('http://192.168.159.240:25005/pluto/nep/queryPlutoNEPList', {projectId: 1/*Cookie.get('projectId')*/}).then(({data}) => {
         this.showData = data.data
         this.showData.forEach(function (item) {
@@ -235,6 +373,7 @@ export default {
           /*item.metaId+=item.metaTitle*/
         })
       })
+
     },
 
     /*remove(node, data) {
@@ -257,6 +396,7 @@ export default {
   },
   mounted() {
     this.getList()
+
   },
   updated() {
 

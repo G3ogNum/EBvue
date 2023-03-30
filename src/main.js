@@ -32,7 +32,7 @@ router.beforeEach((to, from, next) => {
   if(!token&&to.name!=="登录"){
     next({name:'登录'})
   }else if(token&& to.name==='登录'){
-    next({name:'首页'})
+    next({name:'项目管理'})
   }else{
     next()
   }

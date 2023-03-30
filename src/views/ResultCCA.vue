@@ -1,32 +1,32 @@
 <template>
   <div class="ResultCCA">
     <el-row>
-      <el-col :span="10">
-        <el-col :span="8" style="width: 96%">
-          <el-card class="box-card" style="margin-right: 2%">
+      <el-col :span="12">
+        <el-col :span="8" style="width: 98%">
+          <el-card class="box-card" style="">
             <!--折线图-->
-            <div ref="echarts2" style="height: 280px">
+            <div ref="echarts2" style="height: 200px">
 
             </div>
           </el-card>
         </el-col>
-        <el-col :span="8" style="width: 90%">
-          <el-card class="box-card" style="margin-top: 20px ">
+        <el-col :span="8" style="width: 98%">
+          <el-card class="box-card" style="margin-top: 2% ">
             <!--柱状图-->
-            <div ref="echarts3" style="height: 280px">
+            <div ref="echarts3" style="height: 200px">
 
             </div>
           </el-card>
         </el-col>
-<!--        <el-col :span="8" style="width: 80%">
+        <el-col :span="8" style="width: 98%">
           <el-card class="box-card" style="margin-top: 20px">
-            <div ref="echarts1" style="height: 400px">
+            <div ref="echarts1" style="height: 200px">
 
             </div>
           </el-card>
-        </el-col>-->
+        </el-col>
       </el-col>
-      <el-col :span="13">
+      <el-col :span="12" >
         <el-card class="box-card CR" >
           <article class="code_border" v-for="item in this.tableData">
             <div class="title" >
@@ -99,7 +99,7 @@ export default {
   data(){
     return{
       tableData: [
-        {},{},{}
+        {},{},{},
       ],
       tableLabel:{},
       countData:[],
@@ -107,7 +107,6 @@ export default {
   },
   mounted() {
     getData().then(({data})=>{
-      console.log(data)
       const {tableData} =data.data
       const {orderData , userData}=data.data
 
@@ -127,17 +126,24 @@ export default {
 
 
       //基于准备好的dom，初始化echarts实例
-     /* const  echarts1 =echarts.init(this.$refs.echarts1)
+      const  echarts1 =echarts.init(this.$refs.echarts1)
       //指定图标的配置项和数据
       var echarts1Option={}
       //处理xAxis
+     /* const xAxis= Object.keys(orderData.data[0])*/
       const xAxis= Object.keys(orderData.data[0])
+
       const xAxisData={
+        data:orderData.date
+      }
+      const legend={
         data:xAxis
       }
+      console.log(xAxisData)
       echarts1Option.xAxis= xAxisData
+      console.log(echarts1Option.xAxis)
       echarts1Option.yAxis={}
-      echarts1Option.legend=xAxisData
+      echarts1Option.legend=legend
       echarts1Option.series=[]
       xAxis.forEach(key=>{
         echarts1Option.series.push({
@@ -146,8 +152,7 @@ export default {
           type:'line'
         })
       })
-      echarts1.setOption(echarts1Option)*/
-
+      echarts1.setOption(echarts1Option)
       //柱状图
       const echarts2 =echarts.init(this.$refs.echarts2)
       const echarts2Options={
@@ -238,7 +243,7 @@ export default {
 .CR{
   overflow-y: scroll;
   white-space: nowrap;
-  height: 85vh;
+  height: 95vh;
 }
 ::-webkit-scrollbar {
   width: 0 !important;
