@@ -23,7 +23,7 @@
             </el-form-item>
           <h3 style="margin-left: 10%">非功能性特征调整因子</h3>
           <el-form-item :label="item[0].factorDescriptionA" v-for="item in this.ModifyFactor2" style=" ">
-            <el-select value-key="pkId" v-model="sizeModForm.factorList[item[0].factorType-1]" placeholder="请选择">
+            <el-select value-key="pkId" v-model="sizeModForm.factorList[item[0].factorType-1]" :placeholder="item[0].placeholder?item[0].placeholder:'请选择'">
               <el-option :label="childItem.factorValue+'\t'+childItem.factorDescriptionC"
                          v-for="childItem in item"
                          :key="childItem.pkId"
@@ -409,7 +409,7 @@ export default {
         http.post('http://192.168.159.240:25005/pluto/queryProjectFactorList', {projectId: Cookie.get('projectId')}).then(({data}) => {
           this.chosenFactor=data.data
           for(let i=0;i<this.chosenFactor.length;i++){
-            if(this.chosenFactor[i].factorType>3&&this.chosenFactor[i].factorType<9)
+            if(this.chosenFactor[i].factorType>3&&this.chosenFactor[i].factorType<8)
             this.$set(this.ModifyFactor[this.chosenFactor[i].factorType-1][0],"placeholder",this.chosenFactor[i].factorValue+' '+this.chosenFactor[i].factorDescriptionC);
             else
               this.$set(this.ModifyFactor[this.chosenFactor[i].factorType-1][0],"placeholder",this.chosenFactor[i].factorValue+' '+this.chosenFactor[i].factorDescriptionA);
