@@ -47,6 +47,7 @@
             <el-button type="primary" @click="onFactorSubmit">提交</el-button>
             <el-button  @click="FactorsDialogVisible=false">取消</el-button>
             <el-button type="danger" @click="ResetFactor">重置</el-button>
+            <el-button type="warning" @click="StartSCE">开始评估</el-button>
           </el-form-item>
         </el-form>
       </el-dialog>
@@ -54,7 +55,7 @@
           title="成本评估"
           :visible.sync="SCEDialogVisible"
           width="60%"
-
+          @opened="onSCEOpen()"
           :before-close="SCEHandleClose">
 
           <el-card class="box-card" style="display: inline-block;width: 63%;margin-right: 3%">
@@ -96,20 +97,21 @@
           </el-card>
 
         <el-card class="box-card"style="display:inline-block;width: 30%;">
-          <el-col :span="24">
-            <div ref="echarts1" style="height: 200px">
+          <div ref="echarts1" style="height: 230px" >
 
-            </div>
-          </el-col>
-          <el-col :span="24">
-            <div ref="echarts2" style="height: 200px;margin-top: 85px">
+          </div>
 
-            </div>
-          </el-col>
+
+          <div ref="echarts2" style="height: 230px;margin-top: 10px">
+
+          </div>
+
+
         </el-card>
 
 
         <span slot="footer" class="dialog-footer">
+
     <el-button @click="SCEDialogVisible = false">取 消</el-button>
     <el-button type="primary" @click="onSCESubmit">确 定</el-button>
   </span>
@@ -202,15 +204,16 @@
       </el-col>
 
     </el-row>
+
   </div>
+
 </template>
 
 <script>
 import http from "@/utils/request";
-import myFilter from "@/utils/filter";
 import Cookie from "js-cookie";
-import {string} from "mockjs/src/mock/random/basic";
 import * as echarts from "echarts";
+import moment from "moment";
 let id = 1000;
 
 export default {
@@ -227,6 +230,8 @@ export default {
       return data;
     };
     return {
+      chartsData1:[],
+      chartsData2:[],
       SCEData:{},
       ModifyFactor: [],
       ModifyFactor1: [],
@@ -424,12 +429,205 @@ export default {
         label: 'nepDescription',
       },
       loading: true,
+      echarts1Options:{
+        legend:{
+          textStyle:{
+            color:"#333",
+          },
+        },
+        grid:{
+          left:"20%",
+        },
+        tooltip:{
+          trigger:"axis",
+        },
+        xAxis:{
+          type:"category",
+          data:['低价位值','标准值','高价位值'],
+          axisLine:{
+            lineStyle:{
+              color:"#b6a2de",
+            },
+          },
+          axisLabel:{
+            interval:0,
+            color:"#333",
+          },
+        },
+        yAxis:[
+          {
+            type: "value",
+            axisLine:{
+              lineStyle:{
+                color:"#17b3a3",
+              },
+            },
+          },
+        ],
+        color:["#2ec7c9"],
+        series:[
+          {
+            name:'功能点数量',
+            data: this.chartsData1,
+            type:'bar'
+          },
+        ],
+      },
+      echarts2Options:{
+        legend:{
+          textStyle:{
+            color:"#333",
+          },
+        },
+        grid:{
+          left:"20%",
+        },
+        tooltip:{
+          trigger:"axis",
+        },
+        xAxis:{
+          type:"category",
+          data:['低价位值','标准值','高价位值'],
+          axisLine:{
+            lineStyle:{
+              color:"#17b3a3",
+            },
+          },
+          axisLabel:{
+            interval:0,
+            color:"#333",
+          },
+        },
+        yAxis:[
+          {
+            type: "value",
+            axisLine:{
+              lineStyle:{
+                color:"#17b3a3",
+              },
+            },
+          },
+        ],
+        color:["#b6a2de"],
+        series:[
+          {
+            name:'功能点数量',
+            data:this.chartsData2,
+            type:'bar'
+          },
+        ],
+      },
     };
+
   },
 
   methods: {
+    StartSCE(){
+      http.post('http://192.168.159.240:25005/pluto/core/rapidEvaluate',{projectId:1/*Cookie.get('projectId')*/}).then(({data}) =>{
+        this.$message({
+          message: data.msg,
+          type: 'success'
+        });
+      })
+
+
+    },
+    onSCEOpen(){
+      const echarts1 = echarts.init(this.$refs.echarts1)
+      const echarts2 = echarts.init(this.$refs.echarts2)
+      const echarts1Options={
+        legend:{
+          textStyle:{
+            color:"#333",
+          },
+        },
+        grid:{
+          left:"20%",
+        },
+        tooltip:{
+          trigger:"axis",
+        },
+        xAxis:{
+          type:"category",
+          data:['低价位值','标准值','高价位值'],
+          axisLine:{
+            lineStyle:{
+              color:"#b6a2de",
+            },
+          },
+          axisLabel:{
+            interval:0,
+            color:"#333",
+          },
+        },
+        yAxis:[
+          {
+            type: "value",
+            axisLine:{
+              lineStyle:{
+                color:"#17b3a3",
+              },
+            },
+          },
+        ],
+        color:["#2ec7c9"],
+        series:[
+          {
+            name:'软件开发工作量',
+            data: this.chartsData1,
+            type:'bar'
+          },
+        ],
+      }
+      const echarts2Options={
+        legend:{
+          textStyle:{
+            color:"#333",
+          },
+        },
+        grid:{
+          left:"20%",
+        },
+        tooltip:{
+          trigger:"axis",
+        },
+        xAxis:{
+          type:"category",
+          data:['低价位值','标准值','高价位值'],
+          axisLine:{
+            lineStyle:{
+              color:"#17b3a3",
+            },
+          },
+          axisLabel:{
+            interval:0,
+            color:"#333",
+          },
+        },
+        yAxis:[
+          {
+            type: "value",
+            axisLine:{
+              lineStyle:{
+                color:"#17b3a3",
+              },
+            },
+          },
+        ],
+        color:["#b6a2de"],
+        series:[
+          {
+            name:'软件开发成本',
+            data:this.chartsData2,
+            type:'bar'
+          },
+        ],
+      }
+      echarts1.setOption(echarts1Options)
+      echarts2.setOption(echarts2Options)
+    },
     ResetFactor(){
-      http.post('http://192.168.159.240:25005/pluto/deleteProjectFactor',{projectId:Cookie.get('projectId')})
+      http.post('http://192.168.159.240:25005/pluto/deleteProjectFactor',{projectId:1/*Cookie.get('projectId')*/})
       this.FactorsHandleClose()
 
     },
@@ -447,7 +645,7 @@ export default {
       this.$refs.form.validate((valid) => {
         if (valid) {
           http.post('http://192.168.159.240:25005/pluto/addProjectFactor',this.finalForm)
-
+          console.log(this.finalForm)
 
         }
       })
@@ -478,6 +676,7 @@ export default {
         this.ModifyFactor = data.data
         http.post('http://192.168.159.240:25005/pluto/queryProjectFactorList', {projectId: Cookie.get('projectId')}).then(({data}) => {
           this.chosenFactor=data.data
+          console.log(this.chosenFactor)
           for(let i=0;i<this.chosenFactor.length;i++){
             if(this.chosenFactor[i].factorType>3&&this.chosenFactor[i].factorType<8)
             this.$set(this.ModifyFactor[this.chosenFactor[i].factorType-1][0],"placeholder",this.chosenFactor[i].factorValue+' '+this.chosenFactor[i].factorDescriptionC);
@@ -495,8 +694,6 @@ export default {
             this.ModifyFactor1[cnt1++]=this.ModifyFactor[i]
           }
         }
-        console.log(this.ModifyFactor1)
-        console.log(this.ModifyFactor2)
       })
       http.post('http://192.168.159.240:25005/pluto/nep/queryPlutoNEPList', {projectId: 1/*Cookie.get('projectId')*/}).then(({data}) => {
         this.showData = data.data
@@ -511,8 +708,17 @@ export default {
       })
       http.post('http://192.168.159.240:25005/pluto/core/queryEvaluateResult', {projectId: 1/*Cookie.get('projectId')*/}).then(({data}) => {
         this.SCEData = data.data
-        console.log(this.SCEData)
 
+        this.SCEData.modTime = moment( this.SCEData.modTime).format('YYYY-MM-DD HH:mm:ss')
+        this.SCEData.addTime = moment( this.SCEData.addTime).format('YYYY-MM-DD HH:mm:ss')
+
+        this.chartsData1[0]=this.SCEData.softwareDevelopmentEffortLow
+        this.chartsData1[1]=this.SCEData.softwareDevelopmentEffortMedium
+        this.chartsData1[2]=this.SCEData.softwareDevelopmentEffortHigh
+        this.chartsData2[0]=this.SCEData.totalValueLow
+        this.chartsData2[1]=this.SCEData.totalValueMedium
+        this.chartsData2[2]=this.SCEData.totalValueHigh
+        console.log(this.chartsData2)
       })
     },
 
@@ -534,115 +740,11 @@ export default {
           </span>);
     }
   },
-  mounted() {
-    this.getList()
-    //柱状图
-    const echarts1 =echarts.init(this.$refs.echarts1)
-    const echarts2 = echarts.init(this.$refs.echarts2)
-    const echarts1Options={
-      legend:{
-        textStyle:{
-          color:"#333",
-        },
-      },
-      grid:{
-        left:"20%",
-      },
-      tooltip:{
-        trigger:"axis",
-      },
-      xAxis:{
-        type:"category",
-        data:userData.map(item=>item.date),
-        axisLine:{
-          lineStyle:{
-            color:"#17b3a3",
-          },
-        },
-        axisLabel:{
-          interval:0,
-          color:"#333",
-        },
-      },
-      yAxis:[
-        {
-          type: "value",
-          axisLine:{
-            lineStyle:{
-              color:"#17b3a3",
-            },
-          },
-        },
-      ],
-      color:["#2ec7c9","#b6a2de"],
-      series:[
-        {
-          name:'功能点数量',
-          data:userData.map(item=>item.new),
-          type:'bar'
-        },
-        {
-          name:'功能点估值',
-          data:userData.map(item=>item.active),
-          type:'bar'
-        }
-      ],
-    }
-    const echarts2Options={
-      legend:{
-        textStyle:{
-          color:"#333",
-        },
-      },
-      grid:{
-        left:"20%",
-      },
-      tooltip:{
-        trigger:"axis",
-      },
-      xAxis:{
-        type:"category",
-        data:userData.map(item=>item.date),
-        axisLine:{
-          lineStyle:{
-            color:"#17b3a3",
-          },
-        },
-        axisLabel:{
-          interval:0,
-          color:"#333",
-        },
-      },
-      yAxis:[
-        {
-          type: "value",
-          axisLine:{
-            lineStyle:{
-              color:"#17b3a3",
-            },
-          },
-        },
-      ],
-      color:["#2ec7c9","#b6a2de"],
-      series:[
-        {
-          name:'功能点数量',
-          data:userData.map(item=>item.new),
-          type:'bar'
-        },
-        {
-          name:'功能点估值',
-          data:userData.map(item=>item.active),
-          type:'bar'
-        }
-      ],
-    }
-    echarts1.setOption(echarts1Options)
-    echarts2.setOption(echarts2Options)
-  },
-  updated() {
+mounted() {
+  this.getList()
+  //柱状图
 
-  }
+},
 }
 </script>
 
