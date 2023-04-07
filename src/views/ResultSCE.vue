@@ -6,24 +6,24 @@
         width="30%"
         :before-close="handleClose">
       <el-form  :model="changeForm" :rules="rules" ref="changeForm" label-width="150px" class="demo-ruleForm">
-        <el-form-item label="nepId" prop="nepId">
+        <el-form-item label="功能点ID" prop="nepId">
           <el-input :disabled="true" v-model="changeForm.nepId"></el-input>
         </el-form-item>
 <!--        <el-form-item label="nepType" prop="nepType">
           <el-input v-model="changeForm.nepType"></el-input>
         </el-form-item>-->
-        <el-form-item label="nepType" prop="nepType">
+        <el-form-item label="功能点类型" prop="nepType">
           <el-select v-model="changeForm.nepType" placeholder="请选择功能点类型">
-            <el-option label="0" value="0"></el-option>
-            <el-option label="1" value="1"></el-option>
-            <el-option label="2" value="2"></el-option>
-            <el-option label="3" value="3"></el-option>
-            <el-option label="4" value="4"></el-option>
-            <el-option label="5" value="5"></el-option>
-            <el-option label="6" value="6"></el-option>
+
+            <el-option label="ILF" value="1"></el-option>
+            <el-option label="EIF" value="2"></el-option>
+            <el-option label="EI" value="3"></el-option>
+            <el-option label="EO" value="4"></el-option>
+            <el-option label="EQ" value="5"></el-option>
+            <el-option label="OTH" value="6"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="nepDescription" prop="nepDescription">
+        <el-form-item label="功能点描述" prop="nepDescription">
           <el-input v-model="changeForm.nepDescription"></el-input>
         </el-form-item>
       </el-form>
@@ -45,7 +45,7 @@
                 height="65vh"
                 :row-class-name="tableRowClassName">
               <el-table-column
-                  label="id"
+                  label="ID"
                   prop="id">
                 <template slot-scope="scope">
 
@@ -53,7 +53,7 @@
                 </template>
               </el-table-column>
               <el-table-column
-                  label="metaId"
+                  label="标题ID"
                   prop="metaId">
                 <template slot-scope="scope">
                   <el-popover trigger="hover" placement="top">
@@ -66,16 +66,16 @@
                 </template>
               </el-table-column>
               <el-table-column
-                  label="nepId"
+                  label="功能点ID"
                   prop="nepId">
               </el-table-column>
 
               <el-table-column
-                  label="nepType"
+                  label="功能点类型"
                   prop="nepType">
               </el-table-column>
               <el-table-column
-                  label="nepDescription"
+                  label="功能点描述"
                   prop="nepDescription">
               </el-table-column>
               <el-table-column label="操作" prop="operation" >
@@ -156,24 +156,23 @@ export default {
       http.post('http://192.168.159.240:25005/pluto/docx/downloadDocx', param1).then(({data}) => {
         const FileUrl = data.data
         this.fileUrl = FileUrl
-
       })
     },
     tableRowClassName({row, rowIndex}) {
       /*console.log(row.id)*/
-      if(row.nepType===1){
+      if(row.nepType==='ILF'){
         return 'ILF'
       }
-      if(row.nepType===2){
+      if(row.nepType==='EIF'){
         return 'EIF'
       }
-      if(row.nepType===3){
+      if(row.nepType==='EI'){
         return 'EI'
       }
-      if(row.nepType===4){
+      if(row.nepType==='EO'){
         return 'EO'
       }
-      if(row.nepType===5){
+      if(row.nepType==='EQ'){
         return 'EQ'
       }
 
@@ -232,6 +231,28 @@ export default {
         const projects = data.data
         this.tableData = projects
         this.total = this.tableData.length || 0
+        for(let i=0;i<this.tableData.length;i++){
+          switch (this.tableData[i].nepType){
+            case 1:
+              this.tableData[i].nepType='ILF'
+              break
+            case 2:
+              this.tableData[i].nepType='EIF'
+              break
+            case 3:
+              this.tableData[i].nepType='EI'
+              break
+            case 4:
+              this.tableData[i].nepType='EO'
+              break
+            case 5:
+              this.tableData[i].nepType='EQ'
+              break
+            case 6:
+              this.tableData[i].nepType='OTH'
+              break
+          }
+        }
         this.currentPage = 1
         this.setPaginations()
       })

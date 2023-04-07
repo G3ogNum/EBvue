@@ -46,8 +46,73 @@
           <el-form-item size="large" style="margin-left:25%;margin-top: 3%">
             <el-button type="primary" @click="onFactorSubmit">提交</el-button>
             <el-button  @click="FactorsDialogVisible=false">取消</el-button>
+            <el-button type="danger" @click="ResetFactor">重置</el-button>
           </el-form-item>
         </el-form>
+      </el-dialog>
+      <el-dialog
+          title="成本评估"
+          :visible.sync="SCEDialogVisible"
+          width="60%"
+
+          :before-close="SCEHandleClose">
+
+          <el-card class="box-card" style="display: inline-block;width: 63%;margin-right: 3%">
+
+            <div class="text item" style="display: inline-block;width: 50%" >
+
+              <span>{{ "工程ID"+' : '+SCEData.projectId }}</span>
+              <el-divider></el-divider>
+              <span>{{ "原始功能点数量"+' : '+SCEData.originalNepCount }}</span>
+              <el-divider></el-divider>
+              <span>{{ "未调整功能点数量"+' : '+SCEData.unadjustedNepCount }}</span>
+              <el-divider></el-divider>
+              <span>{{ "调整后功能点数量"+' : '+SCEData.adjustedNepCount }}</span>
+              <el-divider></el-divider>
+              <span>{{ "规模调整因子"+' : '+SCEData.scalingFactor }}</span>
+              <el-divider></el-divider>
+              <span>{{ "软件开发生产率"+' : '+SCEData.softwareDevelopmentProductivity }}</span>
+              <el-divider></el-divider>
+              <span>{{ "综合调整因子"+' : '+SCEData.projectFactor }}</span>
+              <el-divider></el-divider>
+            </div>
+            <div class="text item" style="display: inline-block;width: 50%">
+
+              <span>{{ "软件开发工作量"+' : '+SCEData.softwareDevelopmentEffort }}</span>
+              <el-divider></el-divider>
+              <span>{{ "基准人月费率"+' : '+SCEData.baseSalary }}</span>
+              <el-divider></el-divider>
+              <span>{{ "直接非人力成本"+' : '+SCEData.otherCost }}</span>
+              <el-divider></el-divider>
+              <span>{{ "缺陷和交付质量"+' : '+SCEData.defectDensityDeliveryQuality }}</span>
+              <el-divider></el-divider>
+              <span>{{ "总评估价值"+' : '+SCEData.totalValue }}</span>
+              <el-divider></el-divider>
+              <span>{{ "添加时间"+' : '+SCEData.addTime }}</span>
+              <el-divider></el-divider>
+              <span>{{ "调整时间"+' : '+SCEData.modTime }}</span>
+              <el-divider></el-divider>
+            </div>
+          </el-card>
+
+        <el-card class="box-card"style="display:inline-block;width: 30%;">
+          <el-col :span="24">
+            <div ref="echarts1" style="height: 200px">
+
+            </div>
+          </el-col>
+          <el-col :span="24">
+            <div ref="echarts2" style="height: 200px;margin-top: 85px">
+
+            </div>
+          </el-col>
+        </el-card>
+
+
+        <span slot="footer" class="dialog-footer">
+    <el-button @click="SCEDialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="onSCESubmit">确 定</el-button>
+  </span>
       </el-dialog>
       <el-col :span="24" style="margin-bottom: 20px">
         <el-card class="box-card">
@@ -55,7 +120,7 @@
             <el-button type="primary" @click="dialogVisible=true">
               智能识别
             </el-button>
-            <el-button type="primary" @click="dialogVisible=true">
+            <el-button type="primary" @click="SCEDialogVisible=true">
               成本评估
             </el-button>
             <el-button type="primary" @click="FactorsDialogVisible=true">
@@ -145,6 +210,7 @@ import http from "@/utils/request";
 import myFilter from "@/utils/filter";
 import Cookie from "js-cookie";
 import {string} from "mockjs/src/mock/random/basic";
+import * as echarts from "echarts";
 let id = 1000;
 
 export default {
@@ -161,7 +227,7 @@ export default {
       return data;
     };
     return {
-
+      SCEData:{},
       ModifyFactor: [],
       ModifyFactor1: [],
       ModifyFactor2: [],
@@ -281,6 +347,7 @@ export default {
         projectId: Cookie.get('projectId'),
       },
       dialogVisible: false,
+      SCEDialogVisible:false,
       FactorsDialogVisible: false,
       data: generateData(),
       value: [1, 4],
@@ -361,8 +428,14 @@ export default {
   },
 
   methods: {
-    string,
+    ResetFactor(){
+      http.post('http://192.168.159.240:25005/pluto/deleteProjectFactor',{projectId:Cookie.get('projectId')})
+      this.FactorsHandleClose()
 
+    },
+    onSCESubmit:function (){
+      this.SCEHandleClose();
+    },
     onFactorSubmit :function() {
       let cnt=0;
       for(let i=0; i<this.sizeModForm.factorList.length; i++){
@@ -370,11 +443,6 @@ export default {
           this.finalForm.factorList[cnt++]=this.sizeModForm.factorList[i]
         }
       }
-      /*this.sizeModForm.factorList.forEach(function (item) {
-        if(item!=null){
-          this.finalForm.factorList.add(item);
-        }
-      })*/
       console.log(this.finalForm)
       this.$refs.form.validate((valid) => {
         if (valid) {
@@ -385,7 +453,9 @@ export default {
       })
       this.FactorsHandleClose()
     },
-
+    SCEHandleClose(done){
+      this.SCEDialogVisible=false
+    },
     FactorsHandleClose(done) {
       this.FactorsDialogVisible=false
 
@@ -437,12 +507,13 @@ export default {
       })
       http.post('http://192.168.159.240:25005/pluto/docx/queryMetaList', {projectId: 1/*Cookie.get('projectId')*/}).then(({data}) => {
         this.fileData = data.data
-        /*console.log(this.fileData)*/
-        this.fileData.forEach(function (item) {
-          /*item.metaId+=item.metaTitle*/
-        })
-      })
 
+      })
+      http.post('http://192.168.159.240:25005/pluto/core/queryEvaluateResult', {projectId: 1/*Cookie.get('projectId')*/}).then(({data}) => {
+        this.SCEData = data.data
+        console.log(this.SCEData)
+
+      })
     },
 
     /*remove(node, data) {
@@ -465,7 +536,109 @@ export default {
   },
   mounted() {
     this.getList()
-
+    //柱状图
+    const echarts1 =echarts.init(this.$refs.echarts1)
+    const echarts2 = echarts.init(this.$refs.echarts2)
+    const echarts1Options={
+      legend:{
+        textStyle:{
+          color:"#333",
+        },
+      },
+      grid:{
+        left:"20%",
+      },
+      tooltip:{
+        trigger:"axis",
+      },
+      xAxis:{
+        type:"category",
+        data:userData.map(item=>item.date),
+        axisLine:{
+          lineStyle:{
+            color:"#17b3a3",
+          },
+        },
+        axisLabel:{
+          interval:0,
+          color:"#333",
+        },
+      },
+      yAxis:[
+        {
+          type: "value",
+          axisLine:{
+            lineStyle:{
+              color:"#17b3a3",
+            },
+          },
+        },
+      ],
+      color:["#2ec7c9","#b6a2de"],
+      series:[
+        {
+          name:'功能点数量',
+          data:userData.map(item=>item.new),
+          type:'bar'
+        },
+        {
+          name:'功能点估值',
+          data:userData.map(item=>item.active),
+          type:'bar'
+        }
+      ],
+    }
+    const echarts2Options={
+      legend:{
+        textStyle:{
+          color:"#333",
+        },
+      },
+      grid:{
+        left:"20%",
+      },
+      tooltip:{
+        trigger:"axis",
+      },
+      xAxis:{
+        type:"category",
+        data:userData.map(item=>item.date),
+        axisLine:{
+          lineStyle:{
+            color:"#17b3a3",
+          },
+        },
+        axisLabel:{
+          interval:0,
+          color:"#333",
+        },
+      },
+      yAxis:[
+        {
+          type: "value",
+          axisLine:{
+            lineStyle:{
+              color:"#17b3a3",
+            },
+          },
+        },
+      ],
+      color:["#2ec7c9","#b6a2de"],
+      series:[
+        {
+          name:'功能点数量',
+          data:userData.map(item=>item.new),
+          type:'bar'
+        },
+        {
+          name:'功能点估值',
+          data:userData.map(item=>item.active),
+          type:'bar'
+        }
+      ],
+    }
+    echarts1.setOption(echarts1Options)
+    echarts2.setOption(echarts2Options)
   },
   updated() {
 
