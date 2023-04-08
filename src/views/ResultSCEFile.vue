@@ -111,10 +111,11 @@
 
 
         <span slot="footer" class="dialog-footer">
-
-    <el-button @click="SCEDialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="onSCESubmit">确 定</el-button>
-  </span>
+          <el-button type="primary" @click="downloadWord">Word报告下载</el-button>
+          <el-button type="success" @click="downloadExcel">Excel报告下载</el-button>
+          <el-button @click="SCEDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="onSCESubmit">确 定</el-button>
+        </span>
       </el-dialog>
       <el-col :span="24" style="margin-bottom: 20px">
         <el-card class="box-card">
@@ -522,6 +523,23 @@ export default {
   },
 
   methods: {
+    downloadWord(){
+      http.post('http://192.168.159.240:25005/pluto/core/queryDocxResult',{projectId:1/*Cookie.get('projectId')*/}).then(({data}) =>{
+        let WDownload=document.createElement("a");
+        WDownload.href=data.data;
+        WDownload.download=Cookie.get('projectId')+'成本评估Word报告';
+        WDownload.click();
+      })
+
+    },
+    downloadExcel(){
+      http.post('http://192.168.159.240:25005/pluto/core/queryExcelResult',{projectId:1/*Cookie.get('projectId')*/}).then(({data}) =>{
+        let EDownload=document.createElement("a");
+        EDownload.href=data.data;
+        EDownload.download=Cookie.get('projectId')+'成本评估Excel报告';
+        EDownload.click();
+      })
+    },
     StartSCE(){
       http.post('http://192.168.159.240:25005/pluto/core/rapidEvaluate',{projectId:1/*Cookie.get('projectId')*/}).then(({data}) =>{
         this.$message({
