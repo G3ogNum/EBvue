@@ -11,7 +11,7 @@
                 <el-upload
                     class="upload-demo"
                     :headers="headers"
-                    ref="upload"
+                    ref="upload2"
                     :rules="rules"
                     :action="url"
                     :on-preview="handlePreview"
@@ -29,13 +29,22 @@
                   <el-button ref="btn" size="small" type="primary"
 
                              :disabled="isDisabled">点击上传</el-button>
+
                   <div slot="tip" class="el-upload__tip">只能上传zip压缩文件</div>
-                  <div slot="tip" class="el-upload__tip" style="color: red" v-show="(this.status.isUploaded === 1)">*已上传文件请勿重复上传</div>
-                  <div slot="tip" class="el-upload__tip" style="color: red" v-show="isProjectChosen">请先选择项目</div>
+                  <div slot="tip" class="el-upload__tip" style="color: red" v-show="(this.status.isUploaded === 1)">*已上传代码请勿重复上传</div>
+                  <div slot="tip" class="el-upload__tip" style="color: #d7b201" v-show="(this.status.isDetected === 1)">*代码已分析</div>
+                  <div slot="tip" class="el-upload__tip" style="color: #02bbb5" v-show="(this.status.isParsed === 1)">*代码已序列化</div>
+                  <div slot="tip" class="el-upload__tip" style="color: red" v-show="needProjectChosen">请先选择项目</div>
                 </el-upload>
               </el-form-item>
               <el-form-item>
                 <el-button type="primary" @click="onSubmit">提交</el-button>
+                <el-button type="danger" @click="onDelete">删除已提交压缩包</el-button>
+                <font color="red" style="margin-left: 20px">*注意：</font><font>这会将该代码和查重等相关信息一并删除</font>
+              </el-form-item>
+              <el-form-item>
+                <el-button   type="success" :disabled="!isDisabled" @click="onDetected">执行合规性分析</el-button>
+                <el-button   type="warning" @click="onResetDetectionStatus">重置合规性状态</el-button>
               </el-form-item>
             </el-form>
           </el-card>
@@ -91,6 +100,7 @@
 import {getData, getProjectStatus} from "@/api";
 import request from "@/utils/request";
 import Cookie from "js-cookie";
+import http from "@/utils/request";
 
 export default {
 
@@ -104,16 +114,16 @@ export default {
       },
       status: {},
       isDisabled:true,
-      isProjectChosen:true,
+      needProjectChosen:true,
       dataForm: {
         name: '',
         file: null
       },
       headers: {
-        token: this.$store.state.token,
+        token: Cookie.get("token"),
         Authorization: 'eyJraWQiOiIzIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJyb2xlIjoiUk9MRV9lblVzZXIifQ.7F40UMvbJRMUPlpqduVvZmB9aNFyVx2hPNgi_YTKYUs'
       },
-      url: "http://192.168.159.240:25005/pluto/docx/",
+      url: "http://192.168.159.240:25005/neptune/uploadCodeZip",
       form: {
         projectId: '',
 
@@ -124,12 +134,27 @@ export default {
     };
   },
   methods: {
+    onDetected(){
+      http.post('http://192.168.159.240:25005/neptune/detectDuplication',{projectId:Cookie.get('projectId')}).then(({data})=>{
+        this.$message({
+          message:data.msg,
+          type: 'success'
+        })
+      })
+    },
+    onResetDetectionStatus(){
+      http.post('http://192.168.159.240:25005/neptune/resetDetectionStatus',{projectId:Cookie.get('projectId')}).then(({data})=>{
+        this.$message({
+          message:data.msg,
+          type: 'success'
+        })
+      })
+    },
     anyProjectChosen(){
       let pno=Cookie.get('projectId')
-      console.log(pno)
       if(pno===null){
-        this.isProjectChosen=true
-      }else this.isProjectChosen=false
+        this.needProjectChosen=true
+      }else this.needProjectChosen=false
     },
     disableController(){
       if(this.status.isUploaded === 1)this.isDisabled= true
@@ -146,14 +171,18 @@ export default {
     onSubmit: function () {
       localStorage.setItem('token', this.token)
       this.status.isUploaded=1
-      this.$refs.upload.submit();
+      this.$refs.upload2.submit()
 
-      /* console.log('submit!');
-       request({
-         method:"POST",
-         url:'',
-         params: this.form,
-       })*/
+
+    },
+    onDelete(){
+      http.post('http://192.168.159.240:25005/neptune/deleteCode',{projectId:Cookie.get("projectId")}).then(({data})=>{
+
+        this.$message({
+          message:data.msg,
+          type: 'success'
+        });
+      })
     },
     handleRemove(file, fileList) {
 
@@ -169,37 +198,41 @@ export default {
       return this.$confirm(`确定移除 ${file.name}？`);
     },
     beforeAvatarUpload(file) {
-      const isDoc = file.type === '.DOC,.DOCX';
+      const isDoc = file.type === '.ZIP';
       /* const isLt2M = file.size / 1024 / 1024 < 2;*/
 
       if (!isDoc) {
-        this.$message.error('上传头像图片只能是 docx或doc 格式!');
+        this.$message.error('上传头像图片只能是zip格式!');
       }
       /*if (!isLt2M) {
         this.$message.error('上传头像图片大小不能超过 2MB!');
       }*/
       return isDoc /*&& isLt2M*/;
     },
+    getList(){
+      http.post('http://192.168.159.240:25005/neptune/queryCode',{projectId:Cookie.get("projectId")}).then(({data})=>{
+        this.status = data.data
+        console.log(this.status)
+        const file={
+          name:this.status.codeZipName,
+          url:'',
+        }
+        this.fileList[0]=file
+        this.handleChange(file,this.fileList)
+        this.anyProjectChosen()
+        this.disableController()
+      })
+    },
   },
   mounted() {
-    getProjectStatus().then(({data}) => {
-      const status = data.data
-      this.status = status
-      const file={
-        name:this.status.docxFileName,
-        url:'',
-      }
-      this.fileList[0]=file
-      this.handleChange(file,this.fileList)
-      this.anyProjectChosen()
-      this.disableController()
-    })
+    this.getList()
+
   },
   computed: {
     // 这里定义上传文件时携带的参数，即表单数据
     upData: function () {
       return {
-        projectId: 6,
+        projectId: Cookie.get("projectId"),
         /*body: JSON.stringify(this.form)*/
       }
     }

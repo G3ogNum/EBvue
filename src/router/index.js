@@ -13,6 +13,7 @@ import software_cost_estimate from "@/views/software_cost_estimate.vue"
 import home from "@/views/home.vue";
 import project_manager from "@/views/project_manager.vue";
 import ResultSCEFile from "@/views/ResultSCEFile.vue"
+ import vulnerAbility from "@/views/vulnerAbility.vue";
 
 Vue.use(VueRouter)
 
@@ -44,7 +45,7 @@ const routes = [
         component: ResultSCE
       },
       {
-        path: '/ResultSCEFile',
+        path: 'ResultSCEFile',
         name: '成本评估文档',
         label:'成本评估文档',
         component: ResultSCEFile
@@ -54,6 +55,12 @@ const routes = [
         name: '合规性分析结果',
         label:'合规性分析结果',
         component: ResultCCA
+      },
+      {
+        path: 'vulnerAbility',
+        name: '漏洞检索',
+        label:'漏洞检索',
+        component: vulnerAbility
       },
       {
         path: 'code_compliance_analysis',

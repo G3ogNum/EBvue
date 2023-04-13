@@ -60,8 +60,61 @@
 <script>
 
 import 'font-awesome/css/font-awesome.min.css';
+import http from "@/utils/request";
 export default {
-  name: "Code_Repository"
+
+  data: function () {
+    return {
+      licenseGroupList:[],
+      componentList:[],
+      currentMetricsList:[],
+      allProjectResult:[],
+      refresh:[]
+    };
+  },
+  methods: {
+
+
+    getList(){
+      http.get('http://192.168.159.240:25005/uranus/licenseGroup').then(({data})=>{
+        //查询开源协议列表（简化版）
+        this.licenseGroupList=data.data
+        console.log('licenseGroupList'+this.licenseGroupList)
+      })
+      http.get('http://192.168.159.240:25005/uranus/project').then(({data})=>{
+        //查询工程漏洞列表（简化版）
+      })
+      http.get('http://192.168.159.240:25005/uranus/component/project'+'?uuid='+'4cea96fc-e50f-4839-8ec8-0c114497d73b').then(({data})=>{
+        //查询指定工程所使用组件列表
+      })
+      http.get('http://192.168.159.240:25005/uranus/metrics/project/current'+'?uuid='+'4cea96fc-e50f-4839-8ec8-0c114497d73b').then(({data})=>{
+        //查询指定工程当前指标
+      })
+      http.get('http://192.168.159.240:25005/uranus/finding/project'+'?uuid='+'4cea96fc-e50f-4839-8ec8-0c114497d73b').then(({data})=>{
+        //返回指定工程所有结果列表
+      })
+      http.get('http://192.168.159.240:25005/uranus/metrics/project/refresh'+'?uuid='+'4cea96fc-e50f-4839-8ec8-0c114497d73b').then(({data})=>{
+        //请求刷新指定工程指标
+      })
+      http.get('http://192.168.159.240:25005/uranus/bom/cyclonedx/project'+'?uuid='+'4cea96fc-e50f-4839-8ec8-0c114497d73b').then(({data})=>{
+        //以标准格式返回指定工程依赖元数据
+      })
+    }
+  },
+  mounted() {
+    //待更改为getList http形式
+    this.getList()
+
+  },
+  computed: {
+    // 这里定义上传文件时携带的参数，即表单数据
+    upData: function () {
+      return {
+        /*projectId: Cookie.get("projectId"),*/
+        /*body: JSON.stringify(this.form)*/
+      }
+    }
+  },
 }
 </script>
 

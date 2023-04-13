@@ -3,27 +3,27 @@
     <el-col>
       <div class="profile_info">
         <div class="profile_img">
-          <img src="../assets/image/logo.png" alt="">
+          <img src="../assets/image/logoji.png" alt="">
         </div>
       </div>
-      <h5>元素瓶</h5>
+      <h5>智溯</h5>
       <el-menu
           default-active="2"
           class="el-menu-vertical-demo"
           @open="handleOpen"
           @close="handleClose"
-          background-color="rgba(0, 17, 42, 1)"
+          background-color="#000000"
           text-color="#fff"
           :unique-opened="isUO"
 
           active-text-color="#ffd04b">
         <el-menu-item @click="clickMenu(item)" :index="item.name" v-for="item in this.pjt" :key="item.name">
-          <i :class="`el-icon-${item.icon}`"></i>
+          <i style="color: #ffffff;" :class="`el-icon-${item.icon}`"></i>
           <span slot="title">{{ item.label }}</span>
         </el-menu-item>
         <el-submenu  :index="item.label" v-for="item in hasChildren" :key="item.label" >
           <template slot="title">
-            <i :class="`el-icon-${item.icon}`"></i>
+            <i style="color: #ffffff;" :class="`el-icon-${item.icon}`"></i>
             <span>{{ item.label }}</span>
           </template>
           <el-menu-item-group v-for="subItem in item.children" :key="subItem.path">
@@ -31,7 +31,7 @@
           </el-menu-item-group>
         </el-submenu>
         <el-menu-item @click="clickMenu(item)" :index="item.name" v-for="item in noChildren" :key="item.name">
-          <i :class="`el-icon-${item.icon}`"></i>
+          <i style="color: #ffffff;" :class="`el-icon-${item.icon}`"></i>
           <span slot="title">{{ item.label }}</span>
         </el-menu-item>
       </el-menu>
@@ -45,7 +45,8 @@
   width: 300px;
 }
 .el-col{
-  background: rgba(0, 17, 42, 1);
+  /*background: rgba(0, 17, 42, 1);*/
+  background: #000000;
   h5{
     font-size: 18px;
     color: #fff;
@@ -57,7 +58,7 @@
   left: 2px;
   top: 0px;
   width: 260px;
-  height: 80px;
+  height: 150px;
   opacity: 1;
   padding: 20px;
   text-align: center;
@@ -126,6 +127,13 @@ export default {
               path: '/code_compliance_analysis',
               name: 'code_compliance_analysis',
               label: '合规性分析',
+              icon: "s-home",
+              url: "Home/home"
+            },
+            {
+              path: '/vulnerAbility',
+              name: 'vulnerAbility',
+              label: '漏洞检索',
               icon: "s-home",
               url: "Home/home"
             },

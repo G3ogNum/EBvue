@@ -3,6 +3,8 @@
   <div class="header_container">
     <div class="l_header">
       <span class="text" style="color: #2c6bf6">{{this.$route.name}}</span>
+      <span class="text" style="color: #0fab00;margin-left: 20px">{{'工程ID : '}}</span>
+      <span class="text" style="color: #ff0000">{{this.projectId}}</span>
     </div>
     <div class="r_header">
       <el-dropdown trigger="click">
@@ -21,9 +23,12 @@
 </template>
 
 <script>
+import Cookie from "js-cookie";
+
 export default {
   data: function () {
     return {
+      projectId:'',
       menuData:[
         {
         path: '/user_center',
@@ -62,6 +67,11 @@ export default {
   },
   computed:{
 
+  },
+  mounted() {
+
+
+    this.projectId=Cookie.get('projectId')==null?"请选择项目":Cookie.get('projectId')
   }
 }
 </script>

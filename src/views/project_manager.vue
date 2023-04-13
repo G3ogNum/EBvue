@@ -33,7 +33,7 @@
         <el-table
             stripe
             v-loading="loading"
-            height="90%"
+            height="80%"
             :data="showTableData"
             style="width: 100%"
             :row-class-name="tableRowClassName">

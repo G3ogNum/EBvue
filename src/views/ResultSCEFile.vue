@@ -47,7 +47,7 @@
             <el-button type="primary" @click="onFactorSubmit">提交</el-button>
             <el-button  @click="FactorsDialogVisible=false">取消</el-button>
             <el-button type="danger" @click="ResetFactor">重置</el-button>
-            <el-button type="warning" @click="StartSCE">开始评估</el-button>
+            <el-button type="warning" @click="StartSCE" :disabled="this.canSCE">开始评估</el-button>
           </el-form-item>
         </el-form>
       </el-dialog>
@@ -231,6 +231,7 @@ export default {
       return data;
     };
     return {
+      canSCE:true,
       chartsData1:[],
       chartsData2:[],
       SCEData:{},
@@ -693,8 +694,10 @@ export default {
       http.post('http://192.168.159.240:25005/pluto/queryAllFactors').then(({data}) => {
         this.ModifyFactor = data.data
         http.post('http://192.168.159.240:25005/pluto/queryProjectFactorList', {projectId: Cookie.get('projectId')}).then(({data}) => {
+
+
           this.chosenFactor=data.data
-          console.log(this.chosenFactor)
+          this.canSCE=(this.chosenFactor.length==0)?true:false
           for(let i=0;i<this.chosenFactor.length;i++){
             if(this.chosenFactor[i].factorType>3&&this.chosenFactor[i].factorType<8)
             this.$set(this.ModifyFactor[this.chosenFactor[i].factorType-1][0],"placeholder",this.chosenFactor[i].factorValue+' '+this.chosenFactor[i].factorDescriptionC);
