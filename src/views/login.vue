@@ -74,10 +74,11 @@ export default {
       this.$refs.userForm.validate((valid) => {
         if (valid) {
 
-          http.post('http://192.168.159.240:25005/enUser/login',{username:this.userForm.username,password:this.userForm.password}).then(({data}) => {
+          http.post('/common/enUser/login',{username:this.userForm.username,password:this.userForm.password}).then(({data}) => {
             const token=data.data
             if(data.code===200){
               Cookie.set('token',token)
+              Cookie.set('menuId','项目管理')
               this.$router.push('/project_manager')
             }
             this.$store.commit('setToken',token)

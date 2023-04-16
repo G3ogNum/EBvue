@@ -123,6 +123,7 @@ export default {
         token: Cookie.get("token"),
         Authorization: 'eyJraWQiOiIzIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJyb2xlIjoiUk9MRV9lblVzZXIifQ.7F40UMvbJRMUPlpqduVvZmB9aNFyVx2hPNgi_YTKYUs'
       },
+     // url: "http://127.0.0.1:25005/pluto/docx/uploadDocx",
       url: "http://192.168.159.240:25005/neptune/uploadCodeZip",
       form: {
         projectId: '',
@@ -135,7 +136,7 @@ export default {
   },
   methods: {
     onDetected(){
-      http.post('http://192.168.159.240:25005/neptune/detectDuplication',{projectId:Cookie.get('projectId')}).then(({data})=>{
+      http.post('/neptune/detectDuplication',{projectId:Cookie.get('projectId')}).then(({data})=>{
         this.$message({
           message:data.msg,
           type: 'success'
@@ -143,7 +144,7 @@ export default {
       })
     },
     onResetDetectionStatus(){
-      http.post('http://192.168.159.240:25005/neptune/resetDetectionStatus',{projectId:Cookie.get('projectId')}).then(({data})=>{
+      http.post('/neptune/resetDetectionStatus',{projectId:Cookie.get('projectId')}).then(({data})=>{
         this.$message({
           message:data.msg,
           type: 'success'
@@ -176,7 +177,7 @@ export default {
 
     },
     onDelete(){
-      http.post('http://192.168.159.240:25005/neptune/deleteCode',{projectId:Cookie.get("projectId")}).then(({data})=>{
+      http.post('/neptune/deleteCode',{projectId:Cookie.get("projectId")}).then(({data})=>{
 
         this.$message({
           message:data.msg,
@@ -210,7 +211,7 @@ export default {
       return isDoc /*&& isLt2M*/;
     },
     getList(){
-      http.post('http://192.168.159.240:25005/neptune/queryCode',{projectId:Cookie.get("projectId")}).then(({data})=>{
+      http.post('/neptune/queryCode',{projectId:Cookie.get("projectId")}).then(({data})=>{
         this.status = data.data
         console.log(this.status)
         const file={
@@ -242,6 +243,14 @@ export default {
 </script>
 
 <style scoped lang="less">
+::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+}
+.CCA{
+  height: 85vh; //一定要设置，保证占满
+  overflow: auto;
+}
 .xq_border {
   width: 99%;
   height: 99%;

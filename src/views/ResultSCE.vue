@@ -37,6 +37,14 @@
         <el-card class="box-card" style="height: 85vh">
           <div class="ResultSCE_header">
             <el-button type="primary" @click="onClick">查看详情</el-button>
+            <el-form style="display: inline-block;right: 0;" inline :model="nepInfo">
+              <el-form-item>
+                <el-input placeholder="请输入功能点名称" v-model="nepInfo.nepId"></el-input>
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click="onSearch">查询</el-button>
+              </el-form-item>
+            </el-form>
           </div>
           <div class="common-table">
             <el-table
@@ -45,11 +53,11 @@
                 height="65vh"
                 :row-class-name="tableRowClassName">
               <el-table-column
-                  label="ID"
-                  prop="id">
+                  label="功能点ID"
+                  prop="nepId">
                 <template slot-scope="scope">
 
-                  <span style="margin-left: 10px">{{ scope.row.id }}</span>
+                  <span style="margin-left: 10px">{{ scope.row.nepId }}</span>
                 </template>
               </el-table-column>
               <el-table-column
@@ -65,10 +73,10 @@
                   </el-popover>
                 </template>
               </el-table-column>
-              <el-table-column
+<!--              <el-table-column
                   label="功能点ID"
                   prop="nepId">
-              </el-table-column>
+              </el-table-column>-->
 
               <el-table-column
                   label="功能点类型"
@@ -115,6 +123,9 @@ import Cookie from "js-cookie"
 export default {
   data() {
     return {
+      nepInfo:{
+        nepId:'',
+      },
       changeForm:{
         id:'',
         nepId:'',
@@ -134,7 +145,7 @@ export default {
       dialogVisible: false,
       tableData: [],
       showTableData: [],
-      pageSize: 8,
+      pageSize: 10,
       currentPage: 1,
       total: 0,
       fileUrl:'',
@@ -142,6 +153,17 @@ export default {
     }
   },
   methods: {
+    onSearch(){
+      this.total=this.tableData.length
+      let tables = [];
+      for (let i = 0; i < this.total; i++) {
+        if (this.tableData[i].nepId==this.nepInfo.nepId||(!this.nepInfo.nepId)) {
+          tables.push(this.tableData[i]);
+        }
+        this.showTableData = tables;
+      }
+      this.total=this.showTableData.length
+    },
     onClick(){
        this.$router.push('/ResultSCEFile')
       /*let a=document.createElement('a')
@@ -153,7 +175,7 @@ export default {
     getSCEFile(){
       let param1 = new URLSearchParams();
       param1.append('projectId',Cookie.get('projectId'));
-      http.post('http://192.168.159.240:25005/pluto/docx/downloadDocx', param1).then(({data}) => {
+      http.post('/pluto/docx/downloadDocx', param1).then(({data}) => {
         const FileUrl = data.data
         this.fileUrl = FileUrl
       })
@@ -196,7 +218,7 @@ export default {
           console.log(Id)
           let type=this.changeForm.nepType
           let description=this.changeForm.nepDescription
-          http.post('http://192.168.159.240:25005/pluto/nep/updatePlutoNEP',{nepId:Id,nepType:type,nepDescription:description})
+          http.post('/pluto/nep/updatePlutoNEP',{nepId:Id,nepType:type,nepDescription:description})
           let _this=this
           setTimeout(function (){
             _this.getList()
@@ -227,7 +249,7 @@ export default {
       console.log(index, row);
     },
     getList() {
-      http.post('http://192.168.159.240:25005/pluto/nep/queryPlutoNEPList', {projectId: 1/*Cookie.get('projectId')*/}).then(({data}) => {
+      http.post('/pluto/nep/queryPlutoNEPList', {projectId: 1/*Cookie.get('projectId')*/}).then(({data}) => {
         const projects = data.data
         this.tableData = projects
         this.total = this.tableData.length || 0
@@ -274,6 +296,20 @@ export default {
 </script>
 
 <style lang="less">
+.ResultSCE_header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+}
+::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+}
+.ResultSCE{
+  height: 85vh; //一定要设置，保证占满
+  overflow: auto;
+}
 body {
   margin: 0;
 }

@@ -88,6 +88,34 @@
 
         </el-card>
       </el-col>-->
+    <el-col :span="24" >
+      <el-card class="box-card" style="margin-top: 20px" >
+        <template>
+          <el-table
+              :data="componentsTableData"
+              stripe
+              style="width: 100%">
+            <el-table-column
+                prop="name"
+                label="名称">
+            </el-table-column>
+            <el-table-column
+                prop="version"
+                label="版本">
+            </el-table-column>
+            <el-table-column
+                prop="classifier"
+                label="类别">
+            </el-table-column>
+            <el-table-column
+                prop="group"
+                label="群组">
+            </el-table-column>
+          </el-table>
+        </template>
+
+      </el-card>
+    </el-col>
     </el-row>
   </div>
 </template>
@@ -95,9 +123,11 @@
 <script>
 import * as echarts from 'echarts'
 import {getData} from "@/api";
+import http from "@/utils/request";
 export default {
   data(){
     return{
+      componentsTableData:[],
       tableData: [
         {},{},{},
       ],
@@ -105,7 +135,16 @@ export default {
       countData:[],
     }
   },
+  methods:{
+    getList(){
+      http.get('/uranus/component/project'+'?uuid='+'4cea96fc-e50f-4839-8ec8-0c114497d73b').then(({data})=>{
+        //查询指定工程所使用组件列表
+        this.componentsTableData=data.data
+      })
+    }
+  },
   mounted() {
+    this.getList()
     getData().then(({data})=>{
       const {tableData} =data.data
       const {orderData , userData}=data.data
@@ -240,10 +279,19 @@ export default {
 </script>
 
 <style scoped lang="less">
+::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+}
+.ResultCCA{
+  height: 85vh; //一定要设置，保证占满
+  overflow: auto;
+}
 .CR{
   overflow-y: scroll;
   white-space: nowrap;
-  height: 95vh;
+  //height: 108vh;//截图版
+  height: 78.5vh;//全屏版
 }
 ::-webkit-scrollbar {
   width: 0 !important;

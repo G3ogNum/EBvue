@@ -54,13 +54,13 @@
       <el-dialog
           title="成本评估"
           :visible.sync="SCEDialogVisible"
-          width="60%"
+          width="80%"
           @opened="onSCEOpen()"
           :before-close="SCEHandleClose">
 
-          <el-card class="box-card" style="display: inline-block;width: 63%;margin-right: 3%">
+          <el-card class="box-card" style="display: inline-block;width: 53%;margin-right: 3%">
 
-            <div class="text item" style="display: inline-block;width: 50%" >
+            <div class="text item" style="display: inline-block;width: 45%" >
 
               <span>{{ "工程ID"+' : '+SCEData.projectId }}</span>
               <el-divider></el-divider>
@@ -77,9 +77,9 @@
               <span>{{ "综合调整因子"+' : '+SCEData.projectFactor }}</span>
               <el-divider></el-divider>
             </div>
-            <div class="text item" style="display: inline-block;width: 50%">
+            <div class="text item" style="display: inline-block;width: 45%">
 
-              <span>{{ "软件开发工作量"+' : '+SCEData.softwareDevelopmentEffort }}</span>
+              <span>{{ "软件开发工作量"+' : '+SCEData.softwareDevelopmentEffortMedium }}</span>
               <el-divider></el-divider>
               <span>{{ "基准人月费率"+' : '+SCEData.baseSalary }}</span>
               <el-divider></el-divider>
@@ -87,7 +87,7 @@
               <el-divider></el-divider>
               <span>{{ "缺陷和交付质量"+' : '+SCEData.defectDensityDeliveryQuality }}</span>
               <el-divider></el-divider>
-              <span>{{ "总评估价值"+' : '+SCEData.totalValue }}</span>
+              <span>{{ "总评估价值"+' : '+SCEData.totalValueMedium }}</span>
               <el-divider></el-divider>
               <span>{{ "添加时间"+' : '+SCEData.addTime }}</span>
               <el-divider></el-divider>
@@ -96,7 +96,7 @@
             </div>
           </el-card>
 
-        <el-card class="box-card"style="display:inline-block;width: 30%;">
+        <el-card class="box-card"style="display:inline-block;width: 40%;">
           <div ref="echarts1" style="height: 230px" >
 
           </div>
@@ -139,7 +139,7 @@
         </el-card>
       </el-col>
       <el-col :span="6" style="margin-left: 0px;margin-right: 2%; ">
-        <el-card class="box-card" style="height: 75vh">
+        <el-card class="box-card" style="height: 72vh">
           <div class="custom-tree-container">
             <div class="video-tree">
               <el-tree
@@ -153,7 +153,15 @@
                   :expand-on-click-node="true">
 
                   <span class="custom-tree-node" slot-scope="{ node, data  }">
-                  <span>{{ node.label }}</span>
+                    <el-tooltip
+                        :content="node.label"
+                        :disabled="isShowTooltip"
+                        :open-delay="300"
+                        placement="top"
+                        effect="dark">
+                      <span class="ofEllipsis" @mouseover="mouseOver($event)">{{ node.label }}</span>
+                    </el-tooltip>
+
                   <span>
                     <el-button
                         type="text"
@@ -171,7 +179,7 @@
         </el-card>
       </el-col>
       <el-col :span="11" style="margin-right: 2%">
-        <el-card class="box-card" style="height: 75vh" :data="fileData">
+        <el-card class="box-card" style="height: 72vh" :data="fileData">
           <div class="video-tree" id="ctt">
             <h5 v-for="item in this.fileData" :id="item.metaId">
               {{ item.metaId + item.metaTitle }}
@@ -181,7 +189,7 @@
         </el-card>
       </el-col>
       <el-col :span="6">
-        <el-card class="box-card" style="height: 75vh">
+        <el-card class="box-card" style="height: 72vh">
           <div class="video-tree">
             <el-table
                 stripe
@@ -231,6 +239,7 @@ export default {
       return data;
     };
     return {
+      isShowTooltip:false,
       canSCE:true,
       chartsData1:[],
       chartsData2:[],
@@ -524,8 +533,12 @@ export default {
   },
 
   methods: {
+    mouseOver(event) {
+      this.isShowTooltip =
+          event.currentTarget.scrollWidth <= event.currentTarget.clientWidth;
+    },
     downloadWord(){
-      http.post('http://192.168.159.240:25005/pluto/core/queryDocxResult',{projectId:1/*Cookie.get('projectId')*/}).then(({data}) =>{
+      http.post('/pluto/core/queryDocxResult',{projectId:Cookie.get('projectId')}).then(({data}) =>{
         let WDownload=document.createElement("a");
         WDownload.href=data.data;
         WDownload.download=Cookie.get('projectId')+'成本评估Word报告';
@@ -534,7 +547,7 @@ export default {
 
     },
     downloadExcel(){
-      http.post('http://192.168.159.240:25005/pluto/core/queryExcelResult',{projectId:1/*Cookie.get('projectId')*/}).then(({data}) =>{
+      http.post('/pluto/core/queryExcelResult',{projectId:Cookie.get('projectId')}).then(({data}) =>{
         let EDownload=document.createElement("a");
         EDownload.href=data.data;
         EDownload.download=Cookie.get('projectId')+'成本评估Excel报告';
@@ -542,7 +555,7 @@ export default {
       })
     },
     StartSCE(){
-      http.post('http://192.168.159.240:25005/pluto/core/rapidEvaluate',{projectId:1/*Cookie.get('projectId')*/}).then(({data}) =>{
+      http.post('/pluto/core/rapidEvaluate',{projectId:Cookie.get('projectId')}).then(({data}) =>{
         this.$message({
           message: data.msg,
           type: 'success'
@@ -646,7 +659,7 @@ export default {
       echarts2.setOption(echarts2Options)
     },
     ResetFactor(){
-      http.post('http://192.168.159.240:25005/pluto/deleteProjectFactor',{projectId:1/*Cookie.get('projectId')*/})
+      http.post('/pluto/deleteProjectFactor',{projectId:Cookie.get('projectId')})
       this.FactorsHandleClose()
 
     },
@@ -663,7 +676,7 @@ export default {
       console.log(this.finalForm)
       this.$refs.form.validate((valid) => {
         if (valid) {
-          http.post('http://192.168.159.240:25005/pluto/addProjectFactor',this.finalForm)
+          http.post('/pluto/addProjectFactor',this.finalForm)
           console.log(this.finalForm)
 
         }
@@ -691,9 +704,9 @@ export default {
       data.children.push(newChild);
     },
     getList() {
-      http.post('http://192.168.159.240:25005/pluto/queryAllFactors').then(({data}) => {
+      http.post('/pluto/queryAllFactors').then(({data}) => {
         this.ModifyFactor = data.data
-        http.post('http://192.168.159.240:25005/pluto/queryProjectFactorList', {projectId: Cookie.get('projectId')}).then(({data}) => {
+        http.post('/pluto/queryProjectFactorList', {projectId: Cookie.get('projectId')}).then(({data}) => {
 
 
           this.chosenFactor=data.data
@@ -716,18 +729,18 @@ export default {
           }
         }
       })
-      http.post('http://192.168.159.240:25005/pluto/nep/queryPlutoNEPList', {projectId: 1/*Cookie.get('projectId')*/}).then(({data}) => {
+      http.post('/pluto/nep/queryPlutoNEPList', {projectId: 1/*Cookie.get('projectId')*/}).then(({data}) => {
         this.showData = data.data
         this.showData.forEach(function (item) {
           item.nepDescription = item.metaId + item.nepDescription
         })
         this.loading = false
       })
-      http.post('http://192.168.159.240:25005/pluto/docx/queryMetaList', {projectId: 1/*Cookie.get('projectId')*/}).then(({data}) => {
+      http.post('/pluto/docx/queryMetaList', {projectId: 1/*Cookie.get('projectId')*/}).then(({data}) => {
         this.fileData = data.data
 
       })
-      http.post('http://192.168.159.240:25005/pluto/core/queryEvaluateResult', {projectId: 1/*Cookie.get('projectId')*/}).then(({data}) => {
+      http.post('/pluto/core/queryEvaluateResult', {projectId: 1/*Cookie.get('projectId')*/}).then(({data}) => {
         this.SCEData = data.data
 
         this.SCEData.modTime = moment( this.SCEData.modTime).format('YYYY-MM-DD HH:mm:ss')
@@ -770,8 +783,21 @@ mounted() {
 </script>
 
 <style scoped lang="less">
+.ofEllipsis{
+  width:120px;
+  overflow:hidden;
+  text-Overflow:ellipsis;
+  white-Space:nowrap;
 
-
+}
+::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+}
+.ResultSCEFile{
+  height: 85vh; //一定要设置，保证占满
+  overflow: auto;
+}
 .custom-tree-node {
   flex: 1;
   display: flex;
@@ -781,14 +807,8 @@ mounted() {
   padding-right: 8px;
 }
 
-::-webkit-scrollbar {
-  width: 0 !important;
-}
 
-::-webkit-scrollbar {
-  width: 0 !important;
-  height: 0 !important;
-}
+
 
 .video-tree {
 

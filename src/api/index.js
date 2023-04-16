@@ -1,10 +1,11 @@
 import http from "@/utils/request";
 import store from "@/store";
 import Cookie from "js-cookie";
+import axios from "axios";
 //请求首页数据
 export const getData=()=>{
     //返回一个promise对象
-    return http.get('/project_manager/getData')
+    return axios.get('/api/project_manager/getData')
     /*return http.post('/pluto/docx/uploadDocx')*/
 }
 
@@ -18,7 +19,7 @@ export const getProjectStatus=()=>{
 
 
 export const getProjects=()=>{
-    return http.post('http://192.168.159.240:25005/pluto/project/queryPlutoProjectList')
+    return http.post('/common/project/queryProjectList')
 }
 
 

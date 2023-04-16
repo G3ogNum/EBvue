@@ -1,6 +1,6 @@
 <template>
 
-  <div class="header_container">
+  <div class="header_container" >
     <div class="l_header">
       <span class="text" style="color: #2c6bf6">{{this.$route.name}}</span>
       <span class="text" style="color: #0fab00;margin-left: 20px">{{'工程ID : '}}</span>
@@ -26,16 +26,17 @@
 import Cookie from "js-cookie";
 
 export default {
-  data: function () {
+  data() {
     return {
+
       projectId:'',
       menuData:[
         {
-        path: '/user_center',
-        name: 'user_center',
-        label: '用户中心',
-        icon: "s-home",
-        url: "Home/home"
+          path: '/user_center',
+          name: 'user_center',
+          label: '用户中心',
+          icon: "s-home",
+          url: "Home/home"
         },
         {
           path: '/user_center',
@@ -55,12 +56,16 @@ export default {
     }
   },
   methods: {
+
     clickMenu(item) {
       console.log(item);
       if (this.$route.path !== item.path)
         this.$router.push(item.path)
     },
     handleCommand(item){
+      if(item.name==='login')Cookie.set('token','');
+      if(item.name==='login')Cookie.set('projectId','');
+      if(item.name==='login')Cookie.set('menuId','');
       if (this.$route.path !== item.path)
         this.$router.push(item.path)
     }
@@ -70,8 +75,9 @@ export default {
   },
   mounted() {
 
-
-    this.projectId=Cookie.get('projectId')==null?"请选择项目":Cookie.get('projectId')
+    this.projectId=(Cookie.get('projectId')==null||Cookie.get('projectId')==='')?"请选择项目":Cookie.get('projectId')
+    if(this.projectId==null)this.projectId='请选择项目'
+    console.log("pkid"+this.projectId)
   }
 }
 </script>

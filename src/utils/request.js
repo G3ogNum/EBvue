@@ -5,7 +5,8 @@ import Cookie from "js-cookie";
 
 const http=axios.create({
     //通用请求地址前缀
-    baseURL:'/api',
+   // baseURL:'http://127.0.0.1:25005',
+    baseURL:'http://192.168.159.240:25005',
     //请求超时时间
     timeout:10000,
     //
@@ -31,3 +32,6 @@ http.interceptors.response.use(function (response) {
 });
 
 export default http
+
+
+

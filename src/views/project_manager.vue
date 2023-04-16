@@ -129,18 +129,23 @@ export default {
       projectList:[],
       total:0,//当前总条数
       currentPage:1,
-      pageSize:8,
+      pageSize:10,
       pkInfo:{
         projectName:''
       },
       loading:true,
     };
   },
+  inject:[
+    'reload'
+  ],
   methods: {
     chooseProject(row){
       Cookie.set('projectId',row.pkId)
+      Cookie.set('menuId','software_cost_estimate');
       this.$store.commit("setProjectId",row.pkId)
       this.$router.push('software_cost_estimate')
+      this.reload()
       console.log(this.$store.state.projectId)
     },
     onSearch(){
@@ -168,7 +173,7 @@ export default {
       this.$refs.form.validate((valid) => {
         if (valid) {
           let name=this.form.projectName
-          http.post('http://192.168.159.240:25005/pluto/project/addPlutoProject',{projectName:name})
+          http.post('/common/project/addProject',{projectName:name})
           let _this=this
           setTimeout(function (){
             _this.getList()
@@ -225,7 +230,14 @@ export default {
 </script>
 
 <style scoped lang="less">
-
+::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+}
+.project_manager{
+  height: 85vh; //一定要设置，保证占满
+  overflow: auto;
+}
 .project_manager{
   height: 100%;
   .manger_header{
@@ -235,7 +247,7 @@ export default {
 
   }
   .common-table{
-    height: 87%;
+    height: 100%;
     position: relative;
     .pager{
       position: absolute;

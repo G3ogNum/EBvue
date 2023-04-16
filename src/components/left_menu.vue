@@ -1,18 +1,18 @@
 <template>
   <el-row class="tac">
-    <el-col>
+    <el-col  style="width: 299px">
       <div class="profile_info">
         <div class="profile_img">
-          <img src="../assets/image/logoji.png" alt="">
+          <img src="../assets/image/logo.png" alt="">
         </div>
       </div>
-      <h5>智溯</h5>
+      <h5>元素瓶</h5>
       <el-menu
-          default-active="2"
+          :default-active="menuId"
           class="el-menu-vertical-demo"
           @open="handleOpen"
           @close="handleClose"
-          background-color="#000000"
+          background-color=" rgba(0, 17, 42, 1)"
           text-color="#fff"
           :unique-opened="isUO"
 
@@ -27,7 +27,7 @@
             <span>{{ item.label }}</span>
           </template>
           <el-menu-item-group v-for="subItem in item.children" :key="subItem.path">
-            <el-menu-item @click="clickMenu(subItem)" :index="subItem.path" >{{subItem.label}}</el-menu-item>
+            <el-menu-item @click="clickMenu(subItem)" :index="subItem.name" >{{subItem.label}}</el-menu-item>
           </el-menu-item-group>
         </el-submenu>
         <el-menu-item @click="clickMenu(item)" :index="item.name" v-for="item in noChildren" :key="item.name">
@@ -39,48 +39,14 @@
   </el-row>
 </template>
 
-<style lang="less" scoped>
-.el-menu{
-  height: 85vh;
-  width: 300px;
-}
-.el-col{
-  /*background: rgba(0, 17, 42, 1);*/
-  background: #000000;
-  h5{
-    font-size: 18px;
-    color: #fff;
-    margin-bottom: 5px;
-    text-align: center;
-  }
-}
-.profile_info{
-  left: 2px;
-  top: 0px;
-  width: 260px;
-  height: 150px;
-  opacity: 1;
-  padding: 20px;
-  text-align: center;
-  z-index: 999;
-}
-.profile_info.profile_img{
-  width: 200px;
-  margin: 0 auto 5px;
-}
-.profile_info .profile_img img{
-  width: 90%;
-  border-radius: 50%;
-  display: block;
-}
-</style>
-
 <script>
 import project_manager from "@/views/project_manager.vue";
+import Cookie from "js-cookie";
 
 export default {
   data: function () {
     return {
+      menuId:Cookie.get('menuId'),
       isUO:true,
       pjt:[
         {
@@ -113,12 +79,12 @@ export default {
             {
               path: '/ResultSCE',
               name: 'ResultSCE',
-              label: '成本估算结果',
+              label: '功能点提取结果',
               icon: "s-home",
               url: "Home/home"
             },
-        ]
-    },
+          ]
+        },
         {
           label: '开源代码合规性分析',
           icon: "s-help",
@@ -137,6 +103,14 @@ export default {
               icon: "s-home",
               url: "Home/home"
             },
+            {
+              path: '/uranusProjectLIst',
+              name: 'uranusProjectLIst',
+              label: '漏洞工程列表',
+              icon: "s-home",
+              url: "Home/home"
+            },
+
             {
               path: '/ResultCCA',
               name: 'ResultCCA',
@@ -160,8 +134,8 @@ export default {
           icon: "s-home",
           url: "Home/home"
         },
-  ]
-  }
+      ]
+    }
   },
   methods: {
     handleOpen(key, keyPath) {
@@ -172,8 +146,9 @@ export default {
     },
     clickMenu(item){
       console.log(item);
+      Cookie.set('menuId',item.name)
       if(this.$route.path !==item.path && !(this.$route.path==='/home'&&(item.path==='/')))
-      this.$router.push(item.path)
+        this.$router.push(item.path)
     }
   },
   computed:{
@@ -188,3 +163,41 @@ export default {
   }
 }
 </script>
+
+
+
+<style lang="less" scoped>
+.el-menu{
+  height: 79.5vh; // 1080版高度
+  //height: 71.3vh; //截图版高度
+  width: 100%;
+}
+.el-col{
+  background: rgba(0, 17, 42, 1);        //元素瓶配色
+  h5{
+    font-size: 18px;
+    color: #fff;
+    margin-bottom: 5px;
+    text-align: center;
+  }
+}
+.profile_info{
+  left: 2px;
+  top: 0px;
+  width: 260px;
+  height: 100px;
+  opacity: 1;
+  padding: 20px;
+  text-align: center;
+  z-index: 999;
+}
+.profile_info.profile_img{
+  width: 200px;
+  margin: 0 auto 5px;
+}
+.profile_info .profile_img img{
+  width: 90%;
+  border-radius: 50%;
+  display: block;
+}
+</style>

@@ -168,6 +168,7 @@ export default {
         token: Cookie.get("token"),
         Authorization: 'eyJraWQiOiIzIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJyb2xlIjoiUk9MRV9lblVzZXIifQ.7F40UMvbJRMUPlpqduVvZmB9aNFyVx2hPNgi_YTKYUs'
       },
+      //url: "http://127.0.0.1:25005/pluto/docx/uploadDocx",
       url: "http://192.168.159.240:25005/pluto/docx/uploadDocx",
       form: {
         projectId: '',
@@ -214,7 +215,7 @@ export default {
        })*/
     },
     onDelete(){
-      http.post('http://192.168.159.240:25005/pluto/docx/deleteDocx',{projectId:Cookie.get("projectId")}).then((data)=>{
+      http.post('/pluto/docx/deleteDocx',{projectId:Cookie.get("projectId")}).then((data)=>{
 
       })
     },
@@ -244,11 +245,11 @@ export default {
       return isDoc /*&& isLt2M*/;
     },
     getList(){
-      http.post('http://192.168.159.240:25005/pluto/querySoftwareDevelopmentProductivityAllIndustryList').then(({data})=>{
+      http.post('/pluto/querySoftwareDevelopmentProductivityAllIndustryList').then(({data})=>{
         this.SoftwareDevelopmentProductivityAllIndustryList=data.data
         console.log(this.SoftwareDevelopmentProductivityAllIndustryList)
       })
-      http.post('http://192.168.159.240:25005/pluto/queryBaseSalaryStandardList').then(({data})=>{
+      http.post('/pluto/queryBaseSalaryStandardList').then(({data})=>{
         this.BaseSalaryStandardList=data.data
         console.log(this.BaseSalaryStandardList)
       })
@@ -285,6 +286,15 @@ export default {
 </script>
 
 <style scoped lang="less">
+
+::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+}
+.SCE{
+  height: 85vh; //一定要设置，保证占满
+  overflow: auto;
+}
 .xq_border {
   width: 99%;
   height: 99%;

@@ -1,19 +1,20 @@
- import Vue from 'vue'
+import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
- import login from "@/views/login.vue";
+import login from "@/views/login.vue";
 import software_cost_estimate from "@/views/software_cost_estimate.vue"
- import ResultSCE from "@/views/ResultSCE.vue";
- import ResultCCA from "@/views/ResultCCA.vue";
- import code_compliance_analysis from "@/views/code_compliance_analysis.vue";
- import Code_Repository from "@/views/Code_Repository.vue";
- import ResultFile from "@/views/ResultFile.vue";
- import traceability_of_code from "@/views/traceability_of_code.vue";
- import user_center from "@/views/user_center.vue";
+import ResultSCE from "@/views/ResultSCE.vue";
+import ResultCCA from "@/views/ResultCCA.vue";
+import code_compliance_analysis from "@/views/code_compliance_analysis.vue";
+import Code_Repository from "@/views/Code_Repository.vue";
+import ResultFile from "@/views/ResultFile.vue";
+import traceability_of_code from "@/views/traceability_of_code.vue";
+import user_center from "@/views/user_center.vue";
 import home from "@/views/home.vue";
 import project_manager from "@/views/project_manager.vue";
 import ResultSCEFile from "@/views/ResultSCEFile.vue"
- import vulnerAbility from "@/views/vulnerAbility.vue";
+import vulnerAbility from "@/views/vulnerAbility.vue";
+import uranusProjectLIst from "@/views/uranusProjectLIst.vue";
 
 Vue.use(VueRouter)
 
@@ -40,8 +41,8 @@ const routes = [
       },
       {
         path: 'ResultSCE',
-        name: '成本评估结果',
-        label:'成本评估结果',
+        name: '功能点提取结果',
+        label:'功能点提取结果',
         component: ResultSCE
       },
       {
@@ -55,6 +56,12 @@ const routes = [
         name: '合规性分析结果',
         label:'合规性分析结果',
         component: ResultCCA
+      },
+      {
+        path: 'uranusProjectLIst',
+        name: '漏洞工程列表',
+        label:'漏洞工程列表',
+        component: uranusProjectLIst
       },
       {
         path: 'vulnerAbility',
