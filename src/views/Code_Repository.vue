@@ -403,7 +403,7 @@ export default {
   height: 0 !important;
 }
 .CR{
-  height: 85vh; //一定要设置，保证占满
+  height: 80vh; //一定要设置，保证占满
   overflow: auto;
 }
 .code_border{

@@ -235,7 +235,7 @@ export default {
   height: 0 !important;
 }
 .project_manager{
-  height: 85vh; //一定要设置，保证占满
+  height: 80vh; //一定要设置，保证占满
   overflow: auto;
 }
 .project_manager{

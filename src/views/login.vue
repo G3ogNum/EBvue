@@ -40,6 +40,10 @@
           </el-form>
         </div>
       </div>
+
+    </div>
+    <div class="footer_container" >
+      <a href="https://beian.miit.gov.cn/">苏ICP备2022006498号-2</a>
     </div>
   </div>
 </template>
@@ -83,7 +87,7 @@ export default {
             }
             this.$store.commit('setToken',token)
             console.log(this.$store.state.token)
-            })
+          })
 
         } else {
           console.log('error submit!!');
@@ -99,7 +103,11 @@ export default {
 </script>
 
 <style scoped lang="less">
-
+.footer_container{
+  position: absolute;
+  top: 850px;
+  right: 1000px;
+}
 .myInput {
   width: 100%;
   height: 60px;
