@@ -123,8 +123,8 @@ export default {
         token: Cookie.get("token"),
         Authorization: 'eyJraWQiOiIzIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJyb2xlIjoiUk9MRV9lblVzZXIifQ.7F40UMvbJRMUPlpqduVvZmB9aNFyVx2hPNgi_YTKYUs'
       },
-     // url: "http://127.0.0.1:25005/pluto/docx/uploadDocx",
-      url: "http://192.168.159.240:25005/neptune/uploadCodeZip",
+     // url: "http://xxx/pluto/docx/uploadDocx",
+      url: "http://xxx/neptune/uploadCodeZip",
       form: {
         projectId: '',
 

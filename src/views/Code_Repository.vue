@@ -15,9 +15,9 @@
             <div class="title" >
               <h3>
                 <font-awesome-icon icon="fas fa-book" />
-                <a href="#">Tencent</a>
+                <a href="https://github.com/Tencent/behaviac">Tencent</a>
                 /
-                <a href="#">behaviac</a>
+                <a href="https://github.com/Tencent/behaviac">behaviac</a>
               </h3>
             </div>
             <nav class="tabnav">
@@ -39,7 +39,7 @@
             <div class="downSide">
               <div class="demoLink">
                 <p>Code Demo，开源链接：
-                  <a href="#">https://github.com/Tencent/behaviac
+                  <a href="https://github.com/Tencent/behaviac">https://github.com/Tencent/behaviac
                   </a>
                 </p>
               </div>
@@ -64,9 +64,9 @@
             <div class="title" >
               <h3>
                 <font-awesome-icon icon="fas fa-book" />
-                <a href="#">Significant-Gravitas</a>
+                <a href="https://github.com/Significant-Gravitas/Auto-GPT">Significant-Gravitas</a>
                 /
-                <a href="#">Auto-GPT</a>
+                <a href="https://github.com/Significant-Gravitas/Auto-GPT">Auto-GPT</a>
               </h3>
             </div>
             <nav class="tabnav">
@@ -88,7 +88,7 @@
             <div class="downSide">
               <div class="demoLink">
                 <p>Code Demo，开源链接：
-                  <a href="#">https://github.com/Significant-Gravitas/Auto-GPT
+                  <a href="https://github.com/Significant-Gravitas/Auto-GPT">https://github.com/Significant-Gravitas/Auto-GPT
                   </a>
                 </p>
               </div>
@@ -112,9 +112,9 @@
             <div class="title" >
               <h3>
                 <font-awesome-icon icon="fas fa-book" />
-                <a href="#">leetcode-mafia</a>
+                <a href="https://github.com/leetcode-mafia/cheetah">leetcode-mafia</a>
                 /
-                <a href="#">cheetah</a>
+                <a href="https://github.com/leetcode-mafia/cheetah">cheetah</a>
               </h3>
             </div>
             <nav class="tabnav">
@@ -136,7 +136,7 @@
             <div class="downSide">
               <div class="demoLink">
                 <p>Code Demo，开源链接：
-                  <a href="#">https://github.com/leetcode-mafia/cheetah
+                  <a href="https://github.com/leetcode-mafia/cheetah">https://github.com/leetcode-mafia/cheetah
                   </a>
                 </p>
               </div>

@@ -10,11 +10,11 @@ export const getData=()=>{
 }
 
 export const getNepInfo=()=>{
-    return http.post('http://192.168.159.240:25005/pluto/nep/queryPlutoNEP',{projectId:Cookie.get('projectId')})
+    return http.post('http://xxx/pluto/nep/queryPlutoNEP',{projectId:Cookie.get('projectId')})
 }
 
 export const getProjectStatus=()=>{
-    return http.post('http://192.168.159.240:25005/pluto/docx/queryDocx',{projectId:Cookie.get('projectId')})
+    return http.post('http://xxx/pluto/docx/queryDocx',{projectId:Cookie.get('projectId')})
 }
 
 
